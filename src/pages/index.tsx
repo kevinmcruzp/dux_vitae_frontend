@@ -1,17 +1,40 @@
 import { Center, Flex, Text, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
+import { yupResolver } from '@hookform/resolvers/yup';
+import Router from "next/router";
+import { SubmitHandler, useForm } from "react-hook-form";
+import * as yup from 'yup';
 import { Logo } from "../assets/Logo";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { ThemeSwitcher } from "../components/ThemeSwitcher";
 import { useColors } from "../hooks/useColors";
 
+type SignInData = {
+  email: string;
+  password: string;
+}
+
+const SignInSchema = yup.object().shape({
+  email: yup.string().email('El formato debe ser email').required('El email es requerido'),
+  password: yup.string().required('La contraseña es requerida')
+})
+
 export default function Home() {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignInData>({
+    resolver: yupResolver(SignInSchema)
+  })
+
   const { colors } = useColors()
 
-  const isMobileVersion = useBreakpointValue({ base: true, sm: false })
   const isTabletVersion = useBreakpointValue({ base: false, md: true })
-  const isWebVersion = useBreakpointValue({ base: false, lg: true })
-  const isWebLargeVersion = useBreakpointValue({ base: false, xl: true })
+
+  const onSubmit: SubmitHandler<SignInData> = async (data) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    console.log(data)
+
+    Router.push('/home')
+  }
 
   return (
     <Flex w="100vw" h="100vh">
@@ -51,11 +74,31 @@ export default function Home() {
             h="100%"
             justify="center"
             gap={4}
+            onSubmit={handleSubmit(onSubmit)}
           >
-            <Input idName="email" label="Email" color={colors.color} />
-            <Input type="password" idName="password" label="Password" color={colors.color} />
+            <Input
+              idName="email"
+              label="Email"
+              color={colors.color}
+              error={errors.email}
+              {...register('email')}
+            />
+            <Input
+              type="password"
+              idName="password"
+              label="Password"
+              color={colors.color}
+              error={errors.password}
+              {...register('password')}
+            />
 
-            <Button mt={4} type="submit" name="Logon" bg={colors.primary} />
+            <Button
+              mt={4}
+              type="submit"
+              name="Logon"
+              bg={colors.primary}
+              isLoading={isSubmitting}
+            />
           </Flex>
         </Center>
       </Flex>

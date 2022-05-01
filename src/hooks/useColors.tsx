@@ -25,7 +25,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
 
   const bg = useColorModeValue('gray.50', 'gray.900')
   const bgHover = useColorModeValue('white', 'gray.800')
-  const divider = 'gray.200'
+  const divider = useColorModeValue('gray.400', 'gray.200')
   const color = useColorModeValue('gray.800', 'white')
   const primary = 'red.700'
   const secondary = 'yellow.800'
