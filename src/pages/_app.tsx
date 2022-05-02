@@ -1,19 +1,21 @@
 import { ChakraProvider, Flex } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
 import { ColorsProvider } from "../hooks/useColors";
 import { theme } from "../styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
   return (
     <ChakraProvider theme={theme}>
-      <ColorsProvider >
+      <ColorsProvider>
         <Flex>
-          {Router.pathname === '/' ? null : <Sidebar />}
-          <Flex flexDir='column' >
-            {Router.pathname === '/' ? null : <Header />}
+          {router.pathname === "/" ? null : <Sidebar />}
+          <Flex flexDir="column">
+            {router.pathname === "/" ? null : <Header />}
             <Component {...pageProps} />
           </Flex>
         </Flex>
