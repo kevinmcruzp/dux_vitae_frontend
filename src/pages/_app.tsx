@@ -13,9 +13,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <ColorsProvider>
         <Flex>
-          {router.pathname === "/" ? null : <Sidebar />}
+          {router.pathname === "/" ||
+          router.pathname === "/createAccount" ? null : (
+            <Sidebar />
+          )}
           <Flex flexDir="column">
-            {router.pathname === "/" ? null : <Header />}
+            {router.pathname === "/" ||
+            router.pathname === "/createAccount" ? null : (
+              <Header />
+            )}
             <Component {...pageProps} />
           </Flex>
         </Flex>

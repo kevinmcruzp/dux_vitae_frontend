@@ -1,10 +1,16 @@
-import { Center, Flex, Text, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
-import { yupResolver } from '@hookform/resolvers/yup';
-import Router from "next/router";
+import {
+  Center,
+  Flex,
+  useBreakpointValue,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from 'yup';
+import * as yup from "yup";
 import { Logo } from "../assets/Logo";
 import { Button } from "../components/Button";
+import { HomeInfo } from "../components/HomeInfo";
 import { Input } from "../components/Input";
 import { ThemeSwitcher } from "../components/ThemeSwitcher";
 import { useColors } from "../hooks/useColors";
@@ -12,57 +18,61 @@ import { useColors } from "../hooks/useColors";
 type SignInData = {
   email: string;
   password: string;
-}
+};
 
 const SignInSchema = yup.object().shape({
-  email: yup.string().email('El formato debe ser email').required('El email es requerido'),
-  password: yup.string().required('La contraseña es requerida')
-})
+  email: yup
+    .string()
+    .email("El formato debe ser email")
+    .required("El email es requerido"),
+  password: yup.string().required("La contraseña es requerida"),
+});
 
 export default function Home() {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignInData>({
-    resolver: yupResolver(SignInSchema)
-  })
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInData>({
+    resolver: yupResolver(SignInSchema),
+  });
 
-  const { colors } = useColors()
+  const { colors } = useColors();
 
-  const isTabletVersion = useBreakpointValue({ base: false, md: true })
+  const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log(data)
+    console.log(data);
 
-    Router.push('/home')
-  }
+    router.push("/home");
+  };
 
   return (
     <Flex w="100vw" h="100vh">
-      {isTabletVersion
-        && (
-          <Flex w="40%" h="100%" p={[2, 4, 6]} flexDir='column' bg={colors.primary}>
-            <Logo />
-
-            <Center flex='1' flexDir='column' gap={4} >
-              <Text fontSize='4xl' >Bienvenido!</Text>
-              <Text>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Saepe fugiat illum odio nulla eligendi. Illo facere atque,
-                iusto mollitia sint fugiat voluptate blanditiis ipsum ullam
-                necessitatibus ipsam aut. Quod, ea.
-              </Text>
-            </Center>
-          </Flex>
-        )
-      }
-
-      <Flex w={['100%', '100%', '60%']} h="100%" p={[2, 4, 6]} bg={colors.bgHover} flexDir="column">
-        <Flex justify="space-between" align="center" gap={4} >
+      <HomeInfo />
+      <Flex
+        w={["100%", "100%", "60%"]}
+        h="100%"
+        p={[2, 4, 6]}
+        bg={colors.bgHover}
+        flexDir="column"
+      >
+        <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}
 
           <Flex>
-            <ThemeSwitcher color={useColorModeValue('black', 'white')} />
-            <Button name="Create Account" bg={colors.secondary} />
+            <ThemeSwitcher color={useColorModeValue("black", "white")} />
+
+            <Button
+              name="Create Account"
+              bg={colors.secondary}
+              onClick={() => {
+                router.push("/createAccount");
+              }}
+            />
           </Flex>
         </Flex>
 
@@ -81,7 +91,7 @@ export default function Home() {
               label="Email"
               color={colors.color}
               error={errors.email}
-              {...register('email')}
+              {...register("email")}
             />
             <Input
               type="password"
@@ -89,7 +99,7 @@ export default function Home() {
               label="Password"
               color={colors.color}
               error={errors.password}
-              {...register('password')}
+              {...register("password")}
             />
 
             <Button
