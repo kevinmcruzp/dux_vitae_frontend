@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import Head from "next/head";
-import { useColors } from "../hooks/useColors";
+import { useColors } from "../../hooks/useColors";
 
 export default function Clients() {
   const { colors } = useColors();
