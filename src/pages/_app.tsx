@@ -14,12 +14,14 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ColorsProvider>
         <Flex>
           {router.pathname === "/" ||
-          router.pathname === "/createAccount" ? null : (
+          router.pathname === "/createAccount" ||
+          router.pathname === "/createNutritionistAccount" ? null : (
             <Sidebar />
           )}
           <Flex flexDir="column">
             {router.pathname === "/" ||
-            router.pathname === "/createAccount" ? null : (
+            router.pathname === "/createAccount" ||
+            router.pathname === "/createNutritionistAccount" ? null : (
               <Header />
             )}
             <Component {...pageProps} />
