@@ -47,7 +47,7 @@ export default function Home() {
 
     console.log(data);
 
-    router.push("/home");
+    router.push("/nutricionista/home");
   };
 
   return (
