@@ -14,6 +14,7 @@ type Colors = {
   color: string;
   primary: string;
   secondary: string;
+  tertiary: string;
 };
 
 type ColorsContextProps = {
@@ -35,6 +36,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
   const color = useColorModeValue("gray.800", "white");
   const primary = "red.700";
   const secondary = "yellow.800";
+  const tertiary = "green.700";
 
   useEffect(() => {
     const data = {
@@ -44,6 +46,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
       color,
       primary,
       secondary,
+      tertiary,
     };
 
     setColors(data);
