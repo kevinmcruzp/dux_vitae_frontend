@@ -2,7 +2,7 @@ import { Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { Grid } from "../../components/Grid";
 import { useColors } from "../../hooks/useColors";
 
-export default function Home() {
+export default function home() {
   const { colors } = useColors();
 
   return (

@@ -10,12 +10,12 @@ import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { MdOutlineLogin } from "react-icons/md";
 import * as yup from "yup";
-import { Logo } from "../assets/Logo";
-import { Button } from "../components/Button";
-import { HomeInfo } from "../components/HomeInfo";
-import { Input } from "../components/Input";
-import { ThemeSwitcher } from "../components/ThemeSwitcher";
-import { useColors } from "../hooks/useColors";
+import { Logo } from "../../assets/Logo";
+import { Button } from "../../components/Button";
+import { HomeInfo } from "../../components/HomeInfo";
+import { Input } from "../../components/Input";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher";
+import { useColors } from "../../hooks/useColors";
 
 type SignInData = {
   rut: string;
@@ -69,7 +69,7 @@ const SignInSchema = yup.object().shape({
     .oneOf([null, yup.ref("password")], "Las contraseñas no coinciden"),
 });
 
-export default function createNutritionistAccount() {
+export default function register() {
   const {
     register,
     handleSubmit,
@@ -97,6 +97,7 @@ export default function createNutritionistAccount() {
         p={[2, 4, 6]}
         bg={colors.bgHover}
         flexDir="column"
+        overflow="auto"
       >
         <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}

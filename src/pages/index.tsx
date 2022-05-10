@@ -67,10 +67,10 @@ export default function Home() {
             <ThemeSwitcher color={useColorModeValue("black", "white")} />
 
             <Button
-              name="Create Account"
+              name="Registrarse"
               bg={colors.secondary}
               onClick={() => {
-                router.push("/createAccount");
+                router.push("/cliente/register");
               }}
             />
           </Flex>
@@ -105,12 +105,26 @@ export default function Home() {
             <Button
               mt={4}
               type="submit"
-              name="Logon"
+              name="Entrar"
               bg={colors.primary}
               isLoading={isSubmitting}
             />
           </Flex>
         </Center>
+
+        {!isTabletVersion ? (
+          <Center>
+            <Flex justify={"center"}>
+              <Button
+                name="Registrarse nutricionista"
+                bg={colors.tertiary}
+                onClick={() => {
+                  router.push("/nutricionista/register");
+                }}
+              />
+            </Flex>
+          </Center>
+        ) : null}
       </Flex>
     </Flex>
   );

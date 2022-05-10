@@ -1,8 +1,11 @@
 import { Center, Flex, Text, useBreakpointValue } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { Logo } from "../../assets/Logo";
 import { useColors } from "../../hooks/useColors";
+import { Button } from "../Button";
 
 export function HomeInfo() {
+  const router = useRouter();
   const { colors } = useColors();
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
@@ -27,6 +30,18 @@ export function HomeInfo() {
               mollitia sint fugiat voluptate blanditiis ipsum ullam
               necessitatibus ipsam aut. Quod, ea.
             </Text>
+
+            {router.pathname === "/" ? (
+              <Flex justify={"center"}>
+                <Button
+                  name="Registrarse nutricionista"
+                  bg={colors.tertiary}
+                  onClick={() => {
+                    router.push("/nutricionista/register");
+                  }}
+                />
+              </Flex>
+            ) : null}
           </Center>
         </Flex>
       )}

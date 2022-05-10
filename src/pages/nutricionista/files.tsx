@@ -10,12 +10,12 @@ import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { MdOutlineLogin } from "react-icons/md";
 import * as yup from "yup";
-import { Logo } from "../assets/Logo";
-import { Button } from "../components/Button";
-import { HomeInfo } from "../components/HomeInfo";
-import { Input } from "../components/Input";
-import { ThemeSwitcher } from "../components/ThemeSwitcher";
-import { useColors } from "../hooks/useColors";
+import { Logo } from "../../assets/Logo";
+import { Button } from "../../components/Button";
+import { HomeInfo } from "../../components/HomeInfo";
+import { Input } from "../../components/Input";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher";
+import { useColors } from "../../hooks/useColors";
 
 type SignInData = {
   rut: string;
@@ -24,24 +24,6 @@ type SignInData = {
   passwordConfirmation: string;
   fullName: string;
 };
-
-// var Fn = {
-//   // Valida el rut con su cadena completa "XXXXXXXX-X"
-//   validaRut: function (rutCompleto: string) {
-//     if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto)) return false;
-//     var tmp = rutCompleto.split("-");
-//     var digv = tmp[1];
-//     var rut = tmp[0];
-//     if (digv == "K") digv = "k";
-//     return Fn.dv(parseInt(rut)) == digv;
-//   },
-//   dv: function (T: number) {
-//     var M = 0,
-//       S = 1;
-//     for (; T; T = Math.floor(T / 10)) S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
-//     return S ? S - 1 : "k";
-//   },
-// };
 
 const SignInSchema = yup.object().shape({
   rut: yup
@@ -69,7 +51,7 @@ const SignInSchema = yup.object().shape({
     .oneOf([null, yup.ref("password")], "Las contraseñas no coinciden"),
 });
 
-export default function createNutritionistAccount() {
+export default function files() {
   const {
     register,
     handleSubmit,
