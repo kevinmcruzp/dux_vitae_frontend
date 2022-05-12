@@ -6,21 +6,21 @@ export function MenuUser() {
   const { colors } = useColors();
 
   function handleSignOut() {
-    Router.push('/')
+    Router.push("/");
   }
 
   return (
-    <Menu autoSelect={false} direction='rtl' isLazy>
+    <Menu autoSelect={false} direction="rtl" isLazy>
       <MenuButton
         as={Avatar}
-        src='https://avatars.githubusercontent.com/u/59587859?v=4'
-        variant='outline'
-        aria-label='Options'
-        cursor='pointer'
-        w='50px'
-        h='50px'
+        src="https://avatars.githubusercontent.com/u/72741197?v=4"
+        variant="outline"
+        aria-label="Options"
+        cursor="pointer"
+        w="50px"
+        h="50px"
       />
-      <MenuList bg={colors.bgHover} borderColor={colors.divider} >
+      <MenuList bg={colors.bgHover} borderColor={colors.divider}>
         <MenuItem
           color={colors.color}
           _hover={{ bg: colors.bg }}
@@ -30,5 +30,5 @@ export function MenuUser() {
         </MenuItem>
       </MenuList>
     </Menu>
-  )
+  );
 }
