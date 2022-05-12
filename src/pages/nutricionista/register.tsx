@@ -85,7 +85,7 @@ export default function register() {
   const onSubmit: SubmitHandler<SignInData> = (data) => {
     console.log(data);
 
-    Router.push("/");
+    Router.push("/nutricionista/files");
   };
 
   return (
