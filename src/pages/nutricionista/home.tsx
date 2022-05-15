@@ -1,5 +1,5 @@
 import { Flex, SimpleGrid, Text } from "@chakra-ui/react";
-import { Grid } from "../../components/Grid";
+import { GridTemplate } from "../../components/GridTemplate";
 import { useColors } from "../../hooks/useColors";
 
 export default function home() {
@@ -14,21 +14,21 @@ export default function home() {
         alignItems="center"
         justifyItems="center"
       >
-        <Grid title="Tus ultimas actividades">
+        <GridTemplate title="Tus ultimas actividades">
           <Text color={colors.color}>Info</Text>
-        </Grid>
+        </GridTemplate>
 
-        <Grid title="Consultas">
+        <GridTemplate title="Consultas">
           <Text color={colors.color}>Info</Text>
-        </Grid>
+        </GridTemplate>
 
-        <Grid title="Ver agenda">
+        <GridTemplate title="Ver agenda">
           <Text color={colors.color}>Info</Text>
-        </Grid>
+        </GridTemplate>
 
-        <Grid title="Feeds subidos">
+        <GridTemplate title="Feeds subidos">
           <Text color={colors.color}>Info</Text>
-        </Grid>
+        </GridTemplate>
       </SimpleGrid>
     </Flex>
   );
