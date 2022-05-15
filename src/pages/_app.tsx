@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
+import { AuthProvider } from "../context/AuthContext";
 import { ColorsProvider } from "../hooks/useColors";
 import { theme } from "../styles/theme";
 
@@ -12,23 +13,25 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <ColorsProvider>
-        <Flex>
-          {router.pathname === "/" ||
-          router.pathname === "/cliente/register" ||
-          router.pathname === "/nutricionista/register" ||
-          router.pathname === "/nutricionista/files" ? null : (
-            <Sidebar />
-          )}
-          <Flex flexDir="column">
+        <AuthProvider>
+          <Flex>
             {router.pathname === "/" ||
             router.pathname === "/cliente/register" ||
             router.pathname === "/nutricionista/register" ||
             router.pathname === "/nutricionista/files" ? null : (
-              <Header />
+              <Sidebar />
             )}
-            <Component {...pageProps} />
+            <Flex flexDir="column">
+              {router.pathname === "/" ||
+              router.pathname === "/cliente/register" ||
+              router.pathname === "/nutricionista/register" ||
+              router.pathname === "/nutricionista/files" ? null : (
+                <Header />
+              )}
+              <Component {...pageProps} />
+            </Flex>
           </Flex>
-        </Flex>
+        </AuthProvider>
       </ColorsProvider>
     </ChakraProvider>
   );

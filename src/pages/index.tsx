@@ -6,6 +6,7 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { Logo } from "../assets/Logo";
@@ -13,6 +14,7 @@ import { Button } from "../components/Button";
 import { HomeInfo } from "../components/HomeInfo";
 import { Input } from "../components/Input";
 import { ThemeSwitcher } from "../components/ThemeSwitcher";
+import { AuthContext } from "../context/AuthContext";
 import { useColors } from "../hooks/useColors";
 
 type SignInData = {
@@ -42,12 +44,12 @@ export default function Home() {
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
+  const { signIn } = useContext(AuthContext);
+
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await signIn(data);
 
-    console.log(data);
-
-    router.push("/nutricionista/home");
+    // router.push("/nutricionista/home");
   };
 
   return (
