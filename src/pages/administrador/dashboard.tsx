@@ -6,10 +6,14 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 
 export default function () {
   const { colors } = useColors();
+
+  const { user } = useContext(AuthContext);
 
   return (
     <Grid templateRows="repeat(2, 1fr)" gap={8} bg={colors.bg} flex="1">
@@ -28,7 +32,7 @@ export default function () {
         >
           <Center>
             <Text fontSize="2xl" py={2} color={colors.color}>
-              Tus ultimas actividades
+              {user?.email}
             </Text>
           </Center>
 
