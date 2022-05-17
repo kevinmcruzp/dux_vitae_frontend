@@ -6,14 +6,21 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
+import { api } from "../../services/api";
 
 export default function () {
-  const { colors } = useColors();
-
   const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    api.get("/me").then((response) => {
+      console.log(response);
+    });
+  }, []);
+
+  const { colors } = useColors();
 
   return (
     <Grid templateRows="repeat(2, 1fr)" gap={8} bg={colors.bg} flex="1">
