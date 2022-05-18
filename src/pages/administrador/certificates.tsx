@@ -1,6 +1,6 @@
 import {
   Flex,
-  Input,
+  Select,
   Table,
   TableCaption,
   TableContainer,
@@ -27,17 +27,17 @@ export default function Clients() {
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
-          Cliente:
+          Certificates:
         </Text>
-        <Input
-          // onChange={handleChange}
-          placeholder="Buscar"
-          size="sm"
-          w="30%"
-          minW="200px"
-        />
+
+        <Select placeholder="Buscar" size="sm" w="30%" minW="200px">
+          <option value="option1">Option 1</option>
+          <option value="option2">Option 2</option>
+          <option value="option3">Option 3</option>
+        </Select>
+
         <Table w="100%" variant="striped">
-          <TableCaption>Tabla de clientes</TableCaption>
+          <TableCaption>Tabla de certificados</TableCaption>
           <Thead>
             <Tr>
               <Th>Rut</Th>
@@ -48,11 +48,6 @@ export default function Clients() {
             </Tr>
           </Thead>
 
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
           <TableContent />
 
           <Tfoot>

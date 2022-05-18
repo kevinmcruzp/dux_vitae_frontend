@@ -27,7 +27,7 @@ export default function Clients() {
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
-          Cliente:
+          Clientes:
         </Text>
         <Input
           // onChange={handleChange}
@@ -48,11 +48,6 @@ export default function Clients() {
             </Tr>
           </Thead>
 
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
           <TableContent />
 
           <Tfoot>

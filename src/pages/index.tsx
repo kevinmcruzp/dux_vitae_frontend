@@ -47,9 +47,9 @@ export default function Home() {
   const { signIn } = useContext(AuthContext);
 
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
-    await signIn(data);
+    // await signIn(data);
 
-    // router.push("/nutricionista/home");
+    router.push("/nutricionista/home");
   };
 
   return (
