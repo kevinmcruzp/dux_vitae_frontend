@@ -49,7 +49,7 @@ export default function Home() {
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
     // await signIn(data);
 
-    router.push("/nutricionista/home");
+    router.push("/nutritionist/home");
   };
 
   return (
@@ -72,7 +72,7 @@ export default function Home() {
               name="Registrarse"
               bg={colors.secondary}
               onClick={() => {
-                router.push("/cliente/register");
+                router.push("/client/register");
               }}
             />
           </Flex>
@@ -121,7 +121,7 @@ export default function Home() {
                 name="Registrarse nutricionista"
                 bg={colors.tertiary}
                 onClick={() => {
-                  router.push("/nutricionista/register");
+                  router.push("/nutritionist/register");
                 }}
               />
             </Flex>
