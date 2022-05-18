@@ -1,6 +1,12 @@
 import Router from "next/router";
 import { parseCookies, setCookie } from "nookies";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { api } from "../services/api";
 
 type User = {
@@ -34,7 +40,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const { "nextauth.token": token } = parseCookies();
 
-    if (token) {
+    console.log(token);
+
+    if (token || token != undefined) {
       api.get("/me").then((response) => {
         const { email, permissions, roles } = response.data;
 
@@ -82,3 +90,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
+
+export const useAuth = () => useContext(AuthContext);
