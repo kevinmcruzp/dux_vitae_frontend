@@ -43,7 +43,7 @@ api.interceptors.response.use(
           api.defaults.headers["Authorization"] = `Bearer ${token}`;
         });
       } else {
-        //Deslogar el usuario
+        //Desconectar el usuario
       }
     }
   }
