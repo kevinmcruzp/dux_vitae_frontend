@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import {
-  RiFeedbackLine,
+  RiFileCopy2Line,
   RiHome4Line,
-  RiMedal2Line,
   RiMessage2Line,
+  RiSettings3Line,
   RiUser3Line,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
@@ -27,7 +27,7 @@ export function SidebarClient() {
         <Logo />
       </Flex>
 
-      <ActiveLink href="/nutritionist/home">
+      <ActiveLink href="/client/home">
         <Flex
           p={2}
           cursor="pointer"
@@ -42,7 +42,7 @@ export function SidebarClient() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/nutritionist/clients">
+      <ActiveLink href="/client/nutritionist">
         <Flex
           p={2}
           cursor="pointer"
@@ -53,11 +53,11 @@ export function SidebarClient() {
           gap={2}
         >
           <RiUser3Line size="25px" />
-          <Text fontSize="xl">Clientes</Text>
+          <Text fontSize="xl">Nutricionista</Text>
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/client/message">
         <Flex
           p={2}
           cursor="pointer"
@@ -72,7 +72,7 @@ export function SidebarClient() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/client/minute">
         <Flex
           p={2}
           cursor="pointer"
@@ -82,12 +82,12 @@ export function SidebarClient() {
           align="center"
           gap={2}
         >
-          <RiMedal2Line size="25px" />
-          <Text fontSize="xl">Agenda</Text>
+          <RiFileCopy2Line size="25px" />
+          <Text fontSize="xl">Minuta</Text>
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/client/setting">
         <Flex
           p={2}
           cursor="pointer"
@@ -97,8 +97,8 @@ export function SidebarClient() {
           align="center"
           gap={2}
         >
-          <RiFeedbackLine size="25px" />
-          <Text fontSize="xl">Feed</Text>
+          <RiSettings3Line size="25px" />
+          <Text fontSize="xl">Configuración</Text>
         </Flex>
       </ActiveLink>
     </Flex>

@@ -1,19 +1,27 @@
 import { Avatar, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
-import Router from "next/router";
+import { useRouter } from "next/router";
+import { signOut } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 
-export function MenuUser() {
+type HeaderProps = {
+  profile?: () => void;
+  src?: string;
+};
+
+export function MenuUser({ profile, src }: HeaderProps) {
   const { colors } = useColors();
 
+  const router = useRouter();
+
   function handleSignOut() {
-    Router.push("/");
+    signOut();
   }
 
   return (
     <Menu autoSelect={false} direction="rtl" isLazy>
       <MenuButton
         as={Avatar}
-        src="https://avatars.githubusercontent.com/u/72741197?v=4"
+        src={src}
         variant="outline"
         aria-label="Options"
         cursor="pointer"
@@ -21,6 +29,20 @@ export function MenuUser() {
         h="50px"
       />
       <MenuList bg={colors.bgHover} borderColor={colors.divider}>
+        {router.pathname !== "/admin/claim" &&
+          router.pathname !== "/admin/nutritionist" &&
+          router.pathname !== "/admin/dashboard" &&
+          router.pathname !== "/admin/client" &&
+          router.pathname !== "/admin/certificate" && (
+            <MenuItem
+              color={colors.color}
+              _hover={{ bg: colors.bg }}
+              onClick={profile}
+            >
+              Perfil
+            </MenuItem>
+          )}
+
         <MenuItem
           color={colors.color}
           _hover={{ bg: colors.bg }}

@@ -37,7 +37,7 @@ export function HomeInfo() {
                   name="Registrarse nutricionista"
                   bg={colors.tertiary}
                   onClick={() => {
-                    router.push("/nutricionista/register");
+                    router.push("/nutritionist/register");
                   }}
                 />
               </Flex>

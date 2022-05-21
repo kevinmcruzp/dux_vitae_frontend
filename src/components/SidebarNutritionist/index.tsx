@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import {
-  RiFeedbackLine,
+  RiCalendarCheckLine,
   RiHome4Line,
-  RiMedal2Line,
   RiMessage2Line,
+  RiSettings3Line,
   RiUser3Line,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
@@ -42,7 +42,7 @@ export function SidebarNutritionist() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/nutritionist/clients">
+      <ActiveLink href="/nutritionist/client">
         <Flex
           p={2}
           cursor="pointer"
@@ -53,11 +53,11 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiUser3Line size="25px" />
-          <Text fontSize="xl">Clientes</Text>
+          <Text fontSize="xl">Cliente</Text>
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/nutritionist/message">
         <Flex
           p={2}
           cursor="pointer"
@@ -68,11 +68,11 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          <Text fontSize="xl">Mensages</Text>
+          <Text fontSize="xl">Mensage</Text>
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/nutritionist/schedule">
         <Flex
           p={2}
           cursor="pointer"
@@ -82,12 +82,12 @@ export function SidebarNutritionist() {
           align="center"
           gap={2}
         >
-          <RiMedal2Line size="25px" />
+          <RiCalendarCheckLine size="25px" />
           <Text fontSize="xl">Agenda</Text>
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="#">
+      <ActiveLink href="/nutritionist/setting">
         <Flex
           p={2}
           cursor="pointer"
@@ -97,8 +97,8 @@ export function SidebarNutritionist() {
           align="center"
           gap={2}
         >
-          <RiFeedbackLine size="25px" />
-          <Text fontSize="xl">Feed</Text>
+          <RiSettings3Line size="25px" />
+          <Text fontSize="xl">Configuración</Text>
         </Flex>
       </ActiveLink>
     </Flex>
