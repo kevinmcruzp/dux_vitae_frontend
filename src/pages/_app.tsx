@@ -1,7 +1,9 @@
 import { ChakraProvider, Flex } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import { Header } from "../components/Header";
+import { HeaderAdmin } from "../components/HeaderAdmin";
+import { HeaderClient } from "../components/HeaderClient";
+import { HeaderNutritionist } from "../components/HeaderNutritionist";
 import { SidebarAdmin } from "../components/SidebarAdmin";
 import { SidebarClient } from "../components/SidebarClient";
 import { SidebarNutritionist } from "../components/SidebarNutritionist";
@@ -17,37 +19,64 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ColorsProvider>
         <AuthProvider>
           <Flex>
-            {router.pathname === "/admin/certificates" && <SidebarAdmin />}
-            {router.pathname === "/admin/clients" && <SidebarAdmin />}
+            {router.pathname === "/admin/client" && <SidebarAdmin />}
             {router.pathname === "/admin/dashboard" && <SidebarAdmin />}
             {router.pathname === "/admin/nutritionist" && <SidebarAdmin />}
+            {router.pathname === "/admin/claim" && <SidebarAdmin />}
+            {router.pathname === "/admin/certificate" && <SidebarAdmin />}
 
-            {router.pathname === "/client/register" && <SidebarClient />}
+            {router.pathname === "/client/home" && <SidebarClient />}
+            {router.pathname === "/client/message" && <SidebarClient />}
+            {router.pathname === "/client/minute" && <SidebarClient />}
+            {router.pathname === "/client/nutritionist" && <SidebarClient />}
+            {router.pathname === "/client/schedule" && <SidebarClient />}
+            {router.pathname === "/client/profile" && <SidebarClient />}
 
-            {router.pathname === "/nutritionist/clients" && (
+            {router.pathname === "/nutritionist/client" && (
               <SidebarNutritionist />
             )}
-            {router.pathname === "/nutritionist/files" && (
+            {router.pathname === "/nutritionist/message" && (
               <SidebarNutritionist />
             )}
             {router.pathname === "/nutritionist/home" && (
               <SidebarNutritionist />
             )}
-            {router.pathname === "/nutritionist/register" && (
+            {router.pathname === "/nutritionist/profile" && (
               <SidebarNutritionist />
             )}
+            {router.pathname === "/nutritionist/schedule" && (
+              <SidebarNutritionist />
+            )}
+
             <Flex flexDir="column">
-              {router.pathname === "/admin/certificates" && <Header />}
-              {router.pathname === "/admin/clients" && <Header />}
-              {router.pathname === "/admin/dashboard" && <Header />}
-              {router.pathname === "/admin/nutritionist" && <Header />}
+              {router.pathname === "/admin/client" && <HeaderAdmin />}
+              {router.pathname === "/admin/dashboard" && <HeaderAdmin />}
+              {router.pathname === "/admin/nutritionist" && <HeaderAdmin />}
+              {router.pathname === "/admin/claim" && <HeaderAdmin />}
+              {router.pathname === "/admin/certificate" && <HeaderAdmin />}
 
-              {router.pathname === "/client/register" && <Header />}
+              {router.pathname === "/client/home" && <HeaderClient />}
+              {router.pathname === "/client/message" && <HeaderClient />}
+              {router.pathname === "/client/minute" && <HeaderClient />}
+              {router.pathname === "/client/nutritionist" && <HeaderClient />}
+              {router.pathname === "/client/schedule" && <HeaderClient />}
+              {router.pathname === "/client/profile" && <HeaderClient />}
 
-              {router.pathname === "/nutritionist/clients" && <Header />}
-              {router.pathname === "/nutritionist/files" && <Header />}
-              {router.pathname === "/nutritionist/home" && <Header />}
-              {router.pathname === "/nutritionist/register" && <Header />}
+              {router.pathname === "/nutritionist/client" && (
+                <HeaderNutritionist />
+              )}
+              {router.pathname === "/nutritionist/message" && (
+                <HeaderNutritionist />
+              )}
+              {router.pathname === "/nutritionist/home" && (
+                <HeaderNutritionist />
+              )}
+              {router.pathname === "/nutritionist/profile" && (
+                <HeaderNutritionist />
+              )}
+              {router.pathname === "/nutritionist/schedule" && (
+                <HeaderNutritionist />
+              )}
               <Component {...pageProps} />
             </Flex>
           </Flex>

@@ -42,6 +42,7 @@ api.interceptors.response.use(
 
               setCookie(undefined, "nextauth.token", token, {
                 maxAge: 60 * 60 * 24 * 30,
+                //Para que pueda accederse desde todas las páginas
                 path: "/",
               });
 

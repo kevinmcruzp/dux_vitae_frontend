@@ -5,7 +5,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
 import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -131,3 +133,19 @@ export default function Home() {
     </Flex>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const cookies = parseCookies(context);
+
+  if (cookies["nextauth.token"]) {
+    return {
+      redirect: {
+        destination: "/admin/dashboard",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+};
