@@ -13,7 +13,6 @@ export default function home() {
         w="100%"
         alignItems="center"
         justifyItems="center"
-        overflowY="auto"
       >
         <GridTemplate title="Tus ultimas actividades">
           <Text color={colors.color}>Info</Text>

@@ -33,7 +33,7 @@ const SignInSchema = yup.object().shape({
     .matches(/\.pdf$/g, "El formato debe ser pdf"),
 });
 
-export default function files() {
+export default function file() {
   const {
     register,
     handleSubmit,

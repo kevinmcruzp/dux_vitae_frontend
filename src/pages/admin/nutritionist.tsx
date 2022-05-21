@@ -13,7 +13,7 @@ import {
 import { TableContent } from "../../components/TableContent";
 import { useColors } from "../../hooks/useColors";
 
-export default function Nutritionist() {
+export default function nutritionist() {
   const { colors } = useColors();
 
   return (

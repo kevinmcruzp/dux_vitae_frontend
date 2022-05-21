@@ -13,7 +13,7 @@ import {
 import { TableContent } from "../../components/TableContent";
 import { useColors } from "../../hooks/useColors";
 
-export default function Clients() {
+export default function certificate() {
   const { colors } = useColors();
 
   return (

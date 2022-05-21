@@ -6,13 +6,13 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { api } from "../../services/api";
 
-export default function () {
-  const { user } = useContext(AuthContext);
+export default function dashboard() {
+  const { user } = useAuth();
 
   useEffect(() => {
     api

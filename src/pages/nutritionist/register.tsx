@@ -85,7 +85,7 @@ export default function register() {
   const onSubmit: SubmitHandler<SignInData> = (data) => {
     console.log(data);
 
-    Router.push("/nutricionista/files");
+    Router.push("/nutritionist/files");
   };
 
   return (
@@ -97,6 +97,7 @@ export default function register() {
         p={[2, 4, 6]}
         bg={colors.bgHover}
         flexDir="column"
+        overflow="auto"
       >
         <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}
