@@ -7,7 +7,6 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { parseCookies } from "nookies";
 import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -18,6 +17,7 @@ import { Input } from "../components/Input";
 import { ThemeSwitcher } from "../components/ThemeSwitcher";
 import { AuthContext } from "../context/AuthContext";
 import { useColors } from "../hooks/useColors";
+import { withSRRGuest } from "../utils/withSSRGuest";
 
 type SignInData = {
   email: string;
@@ -134,18 +134,11 @@ export default function Home() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookies = parseCookies(context);
-
-  if (cookies["nextauth.token"]) {
+//Si el usuario ya está logueado, no podrá acceder a esta página, por lo que lo redirige a una página expecificada en la función withSRRGuest
+export const getServerSideProps: GetServerSideProps = withSRRGuest(
+  async (context) => {
     return {
-      redirect: {
-        destination: "/admin/dashboard",
-        permanent: false,
-      },
+      props: {},
     };
   }
-  return {
-    props: {},
-  };
-};
+);

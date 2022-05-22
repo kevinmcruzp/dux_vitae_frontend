@@ -6,10 +6,12 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { api } from "../../services/api";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function dashboard() {
   const { user } = useAuth();
@@ -104,3 +106,12 @@ export default function dashboard() {
     </Grid>
   );
 }
+
+//Si el usuario no está autenticado, lo redirige a la página de login
+export const getServerSideProps: GetServerSideProps = withSSRAuth(
+  async (context) => {
+    return {
+      props: {},
+    };
+  }
+);
