@@ -7,11 +7,24 @@ import {
   RiUser3Line,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
+import { useCan } from "../../hooks/useCan";
 import { useColors } from "../../hooks/useColors";
 import { ActiveLink } from "../ActiveLink";
 
-export function SidebarAdmin() {
+type CanProps = {
+  permissions?: string[];
+  roles?: string[];
+};
+
+export function SidebarAdmin({ permissions, roles }: CanProps) {
   const { colors } = useColors();
+
+  console.log(permissions);
+  const userCanSeeComponent = useCan({ permissions, roles });
+
+  if (!userCanSeeComponent) {
+    return null;
+  }
 
   return (
     <Flex
