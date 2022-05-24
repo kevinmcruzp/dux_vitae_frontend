@@ -6,12 +6,10 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useCan } from "../../hooks/useCan";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function dashboard() {
@@ -21,12 +19,6 @@ export default function dashboard() {
   const useCanSeeMetrics = useCan({
     roles: ["administrator", "editor"],
   });
-
-  useEffect(() => {
-    api.get("/me").then((response) => {
-      console.log(response);
-    });
-  }, []);
 
   const { colors } = useColors();
 
@@ -109,12 +101,16 @@ export default function dashboard() {
 }
 
 //Si el usuario no está autenticado, lo redirige a la página de login
-export const getServerSideProps = withSSRAuth(async (ctx) => {
-  const apiClient = setupAPIClient(ctx);
-  const response = await apiClient.get("/me");
-  console.log(response.data);
+export const getServerSideProps = withSSRAuth(
+  async (ctx) => {
+    const apiClient = setupAPIClient(ctx);
+    const response = await apiClient.get("/me");
 
-  return {
-    props: {},
-  };
-});
+    return {
+      props: {},
+    };
+  },
+  {
+    roles: ["administrator"],
+  }
+);
