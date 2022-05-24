@@ -33,7 +33,6 @@ export function withSSRAuth<P>(
 
     if (options) {
       const user = decode<{ permissions: string[]; roles: string[] }>(token);
-
       const { roles } = options;
 
       const userHasValidPermissions = validateUserPermissions({
@@ -55,9 +54,12 @@ export function withSSRAuth<P>(
       return await fn(ctx);
     } catch (err) {
       if (err instanceof AuthTokenError) {
-        console.log("Dentro de server side rendering");
-        destroyCookie(ctx, "nextauth.token");
-        destroyCookie(ctx, "nextauth.refreshToken");
+        destroyCookie(ctx, "nextauth.token", {
+          path: "/",
+        });
+        destroyCookie(ctx, "nextauth.refreshToken", {
+          path: "/",
+        });
 
         return {
           redirect: {

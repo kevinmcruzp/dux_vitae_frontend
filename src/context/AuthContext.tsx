@@ -36,9 +36,13 @@ export const AuthContext = createContext({} as AuthContextData);
 let authChannel: BroadcastChannel;
 
 export function signOut() {
-  destroyCookie(undefined, "nextauth.token");
-  destroyCookie(undefined, "nextauth.refreshToken");
-
+  destroyCookie({}, "nextauth.token", {
+    path: "/",
+  });
+  destroyCookie({}, "nextauth.refreshToken", {
+    path: "/",
+  });
+  console.log("signed out");
   authChannel.postMessage("signOut");
 
   Router.push("/");
@@ -107,7 +111,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-      Router.push("/admin/dashboard");
+      roles[0] === "nutritionist" && Router.push("/nutritionist/home");
+      roles[0] === "administrator" && Router.push("/admin/dashboard");
+      roles[0] === "client" && Router.push("/client/home");
     } catch (err) {
       console.log(err);
     }
