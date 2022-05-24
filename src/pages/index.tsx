@@ -5,7 +5,6 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -135,10 +134,8 @@ export default function Home() {
 }
 
 //Si el usuario ya está logueado, no podrá acceder a esta página, por lo que lo redirige a una página expecificada en la función withSRRGuest
-export const getServerSideProps: GetServerSideProps = withSRRGuest(
-  async (context) => {
-    return {
-      props: {},
-    };
-  }
-);
+export const getServerSideProps = withSRRGuest(async (ctx) => {
+  return {
+    props: {},
+  };
+});
