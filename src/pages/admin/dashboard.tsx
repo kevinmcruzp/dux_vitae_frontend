@@ -17,7 +17,7 @@ export default function dashboard() {
 
   //Validar permisos de usuario
   const useCanSeeMetrics = useCan({
-    roles: ["administrator", "editor"],
+    roles: ["administrator"],
   });
 
   const { colors } = useColors();
