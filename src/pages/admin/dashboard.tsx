@@ -13,7 +13,7 @@ import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function dashboard() {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   //Validar permisos de usuario
   const useCanSeeMetrics = useCan({

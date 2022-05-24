@@ -1,6 +1,6 @@
 import { Avatar, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { signOut } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 
 type HeaderProps = {
@@ -10,11 +10,14 @@ type HeaderProps = {
 
 export function MenuUser({ profile, src }: HeaderProps) {
   const { colors } = useColors();
+  const { signOut } = useAuth();
 
   const router = useRouter();
 
   function handleSignOut() {
-    signOut();
+    if (typeof window !== "undefined") {
+      signOut();
+    }
   }
 
   return (

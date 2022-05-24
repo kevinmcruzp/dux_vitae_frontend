@@ -37,7 +37,6 @@ export function setupAPIClient(ctx: any) {
           const originalConfig = error.config;
 
           if (!isRefreshing) {
-            console.log("refreshing token");
             isRefreshing = true;
             api
               .post("/refresh", { refreshToken })

@@ -19,7 +19,6 @@ type CanProps = {
 export function SidebarAdmin({ permissions, roles }: CanProps) {
   const { colors } = useColors();
 
-  console.log(permissions);
   const userCanSeeComponent = useCan({ permissions, roles });
 
   if (!userCanSeeComponent) {
