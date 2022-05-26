@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useColors } from "../../hooks/useColors";
 
 export default function profile() {
@@ -6,14 +6,18 @@ export default function profile() {
 
   return (
     <Flex
-      w="calc(100vw - 250px)"
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
       h="calc(100vh - 60px)"
-      align="center"
-      justify="center"
       bg={colors.bg}
-      p={2}
+      justifyContent={"center"}
+      alignItems={"center"}
     >
-      <Text> Hola</Text>
+      <Flex w={["100%", "90%", "60%"]} h="31rem" bg="white"></Flex>
     </Flex>
   );
 }

@@ -14,7 +14,12 @@ export function HeaderClient() {
 
   return (
     <Flex
-      w="calc(100vw - 250px)"
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
       h="60px"
       align="center"
       justify="flex-end"

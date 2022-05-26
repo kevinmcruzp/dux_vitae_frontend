@@ -1,10 +1,12 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { MenuUser } from "../MenuUser";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 
 export function HeaderNutritionist() {
+  const { user } = useAuth();
   const router = useRouter();
   const { colors } = useColors();
 
@@ -16,7 +18,12 @@ export function HeaderNutritionist() {
 
   return (
     <Flex
-      w="calc(100vw - 250px)"
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
       h="60px"
       align="center"
       justify="flex-end"
@@ -31,7 +38,7 @@ export function HeaderNutritionist() {
       <Flex flexDir="column" mr={2}>
         <Text color={colors.color}>@kevin_cruz</Text>
         <Text fontSize="14px" color={colors.divider}>
-          kevin@inacap.cl
+          {user?.email}
         </Text>
       </Flex>
 

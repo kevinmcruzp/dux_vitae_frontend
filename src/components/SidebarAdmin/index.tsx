@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
   RiFeedbackLine,
   RiHome4Line,
@@ -17,6 +17,7 @@ type CanProps = {
 };
 
 export function SidebarAdmin({ permissions, roles }: CanProps) {
+  const isWebVersion = useBreakpointValue({ base: false, lg: true });
   const { colors } = useColors();
 
   const userCanSeeComponent = useCan({ permissions, roles });
@@ -30,8 +31,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
       position="sticky"
       top="0"
       h="100vh"
-      minW="250px"
-      maxW="250px"
+      w={["50px", "50px", "50px", "250px"]}
       bg={colors.primary}
       flexDir="column"
     >
@@ -50,7 +50,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
           gap={2}
         >
           <RiHome4Line size="25px" />
-          <Text fontSize="xl">Dashboard</Text>
+          {isWebVersion && <Text fontSize="xl">Dashboard</Text>}
         </Flex>
       </ActiveLink>
 
@@ -65,7 +65,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
           gap={2}
         >
           <RiUser3Line size="25px" />
-          <Text fontSize="xl">Nutricionista</Text>
+          {isWebVersion && <Text fontSize="xl">Nutricionista</Text>}
         </Flex>
       </ActiveLink>
 
@@ -80,7 +80,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          <Text fontSize="xl">Cliente</Text>
+          {isWebVersion && <Text fontSize="xl">Cliente</Text>}
         </Flex>
       </ActiveLink>
 
@@ -95,7 +95,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
           gap={2}
         >
           <RiProfileLine size="25px" />
-          <Text fontSize="xl">Certificado</Text>
+          {isWebVersion && <Text fontSize="xl">Certificado</Text>}
         </Flex>
       </ActiveLink>
 
@@ -110,7 +110,7 @@ export function SidebarAdmin({ permissions, roles }: CanProps) {
           gap={2}
         >
           <RiFeedbackLine size="25px" />
-          <Text fontSize="xl">Reclamos</Text>
+          {isWebVersion && <Text fontSize="xl">Reclamos</Text>}
         </Flex>
       </ActiveLink>
     </Flex>

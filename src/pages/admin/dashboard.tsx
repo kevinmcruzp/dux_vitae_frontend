@@ -23,7 +23,18 @@ export default function dashboard() {
   const { colors } = useColors();
 
   return (
-    <Grid templateRows="repeat(2, 1fr)" gap={8} bg={colors.bg} flex="1">
+    <Grid
+      templateRows="repeat(2, 1fr)"
+      gap={8}
+      bg={colors.bg}
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
+      h="calc(100vh - 60px)"
+    >
       <SimpleGrid
         columns={1}
         w="100%"

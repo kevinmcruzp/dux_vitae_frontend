@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
   RiFileCopy2Line,
   RiHome4Line,
@@ -12,14 +12,14 @@ import { ActiveLink } from "../ActiveLink";
 
 export function SidebarClient() {
   const { colors } = useColors();
+  const isWebVersion = useBreakpointValue({ base: false, lg: true });
 
   return (
     <Flex
       position="sticky"
       top="0"
       h="100vh"
-      minW="250px"
-      maxW="250px"
+      w={["50px", "50px", "50px", "250px"]}
       bg={colors.primary}
       flexDir="column"
     >
@@ -38,7 +38,8 @@ export function SidebarClient() {
           gap={2}
         >
           <RiHome4Line size="25px" />
-          <Text fontSize="xl">Home</Text>
+
+          {isWebVersion && <Text fontSize="xl">Home</Text>}
         </Flex>
       </ActiveLink>
 
@@ -53,7 +54,7 @@ export function SidebarClient() {
           gap={2}
         >
           <RiUser3Line size="25px" />
-          <Text fontSize="xl">Nutricionista</Text>
+          {isWebVersion && <Text fontSize="xl">Nutricionista</Text>}
         </Flex>
       </ActiveLink>
 
@@ -68,7 +69,7 @@ export function SidebarClient() {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          <Text fontSize="xl">Mensages</Text>
+          {isWebVersion && <Text fontSize="xl">Mensages</Text>}
         </Flex>
       </ActiveLink>
 
@@ -83,7 +84,7 @@ export function SidebarClient() {
           gap={2}
         >
           <RiFileCopy2Line size="25px" />
-          <Text fontSize="xl">Minuta</Text>
+          {isWebVersion && <Text fontSize="xl">Minuta</Text>}
         </Flex>
       </ActiveLink>
 
@@ -98,7 +99,7 @@ export function SidebarClient() {
           gap={2}
         >
           <RiSettings3Line size="25px" />
-          <Text fontSize="xl">Configuración</Text>
+          {isWebVersion && <Text fontSize="xl">Configuración</Text>}
         </Flex>
       </ActiveLink>
     </Flex>

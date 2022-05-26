@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
   RiCalendarCheckLine,
   RiHome4Line,
@@ -13,15 +13,17 @@ import { ActiveLink } from "../ActiveLink";
 export function SidebarNutritionist() {
   const { colors } = useColors();
 
+  const isWebVersion = useBreakpointValue({ base: false, lg: true });
+
   return (
     <Flex
       position="sticky"
       top="0"
       h="100vh"
-      minW="250px"
-      maxW="250px"
+      w={["50px", "50px", "50px", "250px"]}
       bg={colors.primary}
       flexDir="column"
+      overflow="hidden"
     >
       <Flex p={2}>
         <Logo />
@@ -38,7 +40,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiHome4Line size="25px" />
-          <Text fontSize="xl">Home</Text>
+          {isWebVersion && <Text fontSize="xl">Home</Text>}
         </Flex>
       </ActiveLink>
 
@@ -53,7 +55,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiUser3Line size="25px" />
-          <Text fontSize="xl">Cliente</Text>
+          {isWebVersion && <Text fontSize="xl">Cliente</Text>}
         </Flex>
       </ActiveLink>
 
@@ -68,7 +70,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          <Text fontSize="xl">Mensage</Text>
+          {isWebVersion && <Text fontSize="xl">Mensage</Text>}
         </Flex>
       </ActiveLink>
 
@@ -83,7 +85,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiCalendarCheckLine size="25px" />
-          <Text fontSize="xl">Agenda</Text>
+          {isWebVersion && <Text fontSize="xl">Agenda</Text>}
         </Flex>
       </ActiveLink>
 
@@ -98,7 +100,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiSettings3Line size="25px" />
-          <Text fontSize="xl">Configuración</Text>
+          {isWebVersion && <Text fontSize="xl">Configuración</Text>}
         </Flex>
       </ActiveLink>
     </Flex>

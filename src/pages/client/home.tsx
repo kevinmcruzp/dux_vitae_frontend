@@ -6,13 +6,22 @@ export default function home() {
   const { colors } = useColors();
 
   return (
-    <Flex bg={colors.bg} flex="1" p={[2, 4, 6]}>
+    <Flex
+      bg={colors.bg}
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
+      h="calc(100vh - 60px)"
+    >
       <SimpleGrid
         columns={2}
-        spacing={8}
         w="100%"
         alignItems="center"
         justifyItems="center"
+        gap={4}
       >
         <GridTemplate title="Tus ultimas actividades">
           <Text color={colors.color}>Info</Text>

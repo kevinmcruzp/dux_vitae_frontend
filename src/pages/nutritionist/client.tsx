@@ -18,12 +18,16 @@ export default function client() {
 
   return (
     <Flex
-      w="calc(100vw - 250px)"
+      w={[
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 50px)",
+        "calc(100vw - 250px)",
+      ]}
       h="calc(100vh - 60px)"
       align="center"
       justify="center"
       bg={colors.bg}
-      p={2}
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
