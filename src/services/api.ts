@@ -9,7 +9,7 @@ let failedRequestsQueue: {
   onFailure: (err: AxiosError<any>) => void;
 }[] = [];
 
-export function setupAPIClient(ctx: any) {
+export function setupAPIClient(ctx = undefined) {
   let cookies = parseCookies(ctx);
 
   const api = axios.create({
@@ -44,7 +44,7 @@ export function setupAPIClient(ctx: any) {
                 const { token } = response.data;
 
                 setCookie(ctx, "nextauth.token", token, {
-                  maxAge: 60 * 60 * 24 * 30,
+                  maxAge: 60 * 60 * 24 * 30, //30 dias
                   //Para que pueda accederse desde todas las páginas
                   path: "/",
                 });
@@ -54,7 +54,7 @@ export function setupAPIClient(ctx: any) {
                   "nextauth.refreshToken",
                   response.data.refreshToken,
                   {
-                    maxAge: 60 * 60 * 24 * 30,
+                    maxAge: 60 * 60 * 24 * 30, //30 dias
                     path: "/",
                   }
                 );
@@ -100,6 +100,8 @@ export function setupAPIClient(ctx: any) {
         } else {
           //Desconectar el usuario
           if (typeof window !== "undefined") {
+            console.log("Error en api");
+
             signOut();
           } else {
             return Promise.reject(new AuthTokenError());

@@ -22,8 +22,6 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
       console.log(roles[0]);
 
       if (roles[0] === "administrator") {
-        console.log(roles[0]);
-
         return {
           redirect: {
             destination: "/admin/dashboard",
@@ -33,8 +31,6 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
       }
 
       if (roles[0] === "client") {
-        console.log(roles[0]);
-
         return {
           redirect: {
             destination: "/client/home",
@@ -44,7 +40,6 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
       }
 
       if (roles[0] === "nutritionist") {
-        console.log(roles[0]);
         return {
           redirect: {
             destination: "/nutritionist/home",

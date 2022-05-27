@@ -59,6 +59,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     authChannel.onmessage = (message) => {
       switch (message.data) {
         case "signOut":
+          console.log("dentro del switch");
           signOut();
           break;
         default:
