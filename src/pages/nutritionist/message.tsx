@@ -6,7 +6,6 @@ import { useColors } from "../../hooks/useColors";
 
 type User = {
   email: string;
-  permissions: string[];
   roles: string[];
 };
 
@@ -25,9 +24,10 @@ export default function message() {
 
   const { user } = useAuth();
 
+  console.log(chat);
+
   useEffect(() => {
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
-    console.log("hola");
 
     socket.io.on("error", (error) => {
       console.log(error);
@@ -37,17 +37,18 @@ export default function message() {
       console.log(socket.connected); // true
     });
 
-    socket.on("received", (msg) => {
-      console.log(msg);
+    socket.on("received", (user, message) => {
+      // if (message) {
+      //   addChat(user, message);
+      //   // setChat([...chat, { user, message }]);
+      // }
     });
 
     setSockets(socket);
   }, []);
 
   // useEffect(() => {
-  //   async function conectingSocket() {
-  //     console.log("Connecting to socket");
-  //     const socket = await io("http://localhost:3333");
+  //     const socket = io("http://localhost:3333");
 
   //     console.log(socket.id);
 
@@ -65,23 +66,27 @@ export default function message() {
   //       console.log(error);
   //     });
 
-  //     return socket.disconnect();
-  //   }
-
   //   conectingSocket();
   // }, []);
 
+  // function addChat(user, message) {
+  //   const msg: IMsg = {
+  //     user,
+  //     message,
+  //   };
+
+  //   setChat([...chat, msg]);
+  // }
+
   const sendMessage = () => {
-    console.log(sockets);
+    sockets.emit("message", user, message);
 
-    sockets.emit("message", message);
+    const msg: IMsg = {
+      user,
+      message,
+    };
 
-    if (message) {
-      const msg: IMsg = {
-        user,
-        message,
-      };
-    }
+    setChat([...chat, msg]);
 
     return () => {
       sockets.disconnect();
@@ -117,37 +122,47 @@ export default function message() {
         </Flex>
 
         <Divider orientation="vertical" color={colors.divider} />
-        <Flex flex="1" p={8}>
-          {chat.length ? (
-            chat.map((chat, index) => (
-              <div key={"msg_" + 1}>
-                <span>
-                  <Text>{chat.user.email}</Text>
-                </span>
-                <Text>: {chat.message}</Text>
-              </div>
-            ))
-          ) : (
-            <Text>No messages yet</Text>
-          )}
+        <Flex flex="1" p={8} flexDir="column" gap={4}>
+          <Flex h="29rem" flexDir="column" maxW="40rem" overflowY={"auto"}>
+            {chat.length ? (
+              chat.map(
+                (chat, index) => (
+                  console.log(chat),
+                  (
+                    <Flex key={index}>
+                      <span>
+                        <Text>{chat.user.email}</Text>
+                      </span>
+                      <Text>: {chat.message}</Text>
+                    </Flex>
+                  )
+                )
+              )
+            ) : (
+              <Text>No messages yet</Text>
+            )}
+          </Flex>
 
-          <Input
-            type={"text"}
-            placeholder={connected ? "Type your message" : "Connecting..."}
-            disabled={!connected}
-            onChange={(e) => {
-              setMessage(e.target.value);
-            }}
-            // onKeyPress={(e) => {
-            //   if (e.key === "Enter") {
-            //     sendMessage();
-            //   }
-            // }}
-          />
+          <Flex>
+            <Input
+              maxW={"50rem"}
+              type={"text"}
+              placeholder={connected ? "Type your message" : "Connecting..."}
+              disabled={!connected}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              // onKeyPress={(e) => {
+              //   if (e.key === "Enter") {
+              //     sendMessage();
+              //   }
+              // }}
+            />
 
-          <Button type="button" disabled={!connected} onClick={sendMessage}>
-            Enviar
-          </Button>
+            <Button type="submit" disabled={!connected} onClick={sendMessage}>
+              Enviar
+            </Button>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

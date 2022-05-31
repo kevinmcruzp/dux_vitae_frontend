@@ -11,7 +11,6 @@ import { api } from "../services/apiClient";
 
 type User = {
   email: string;
-  permissions: string[];
   roles: string[];
 };
 
@@ -75,9 +74,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api
         .get("/me")
         .then((response) => {
-          const { email, permissions, roles } = response.data;
+          const { email, roles } = response.data;
 
-          setUser({ email, permissions, roles });
+          setUser({ email, roles });
         })
         .catch(() => {
           signOut();
@@ -92,7 +91,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       });
 
-      const { token, refreshToken, permissions, roles } = response.data;
+      console.log(response);
+
+      const { token, refreshToken, roles } = response.data;
 
       setCookie(undefined, "nextauth.token", token, {
         maxAge: 60 * 60 * 24 * 30, //30 dias
@@ -106,15 +107,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setUser({
         email,
-        permissions,
         roles,
       });
 
       api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-      roles[0] === "nutritionist" && Router.push("/nutritionist/home");
-      roles[0] === "administrator" && Router.push("/admin/dashboard");
-      roles[0] === "client" && Router.push("/client/home");
+      roles === "nutritionist" && Router.push("/nutritionist/home");
+      roles === "admin" && Router.push("/admin/dashboard");
+      roles === "client" && Router.push("/client/home");
     } catch (err) {
       console.log(err);
     }
