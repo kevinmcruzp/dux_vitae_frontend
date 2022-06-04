@@ -25,7 +25,7 @@ export function setupAPIClient(ctx = undefined) {
       return response;
     },
     (error: AxiosError) => {
-      if (error.response?.status === 401) {
+      if (error.response.status === 401) {
         if (error.response.data?.code === "token.expired") {
           //Renovar token
           cookies = parseCookies(ctx);
@@ -35,7 +35,6 @@ export function setupAPIClient(ctx = undefined) {
           //error.config tiene toda la configuración de la requesición del backend
           //Tiene toda la configuración que se necesita para repetir una requesición al backend
           const originalConfig = error.config;
-
           if (!isRefreshing) {
             isRefreshing = true;
             api

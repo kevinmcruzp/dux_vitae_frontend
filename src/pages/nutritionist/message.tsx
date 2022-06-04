@@ -6,7 +6,7 @@ import { useColors } from "../../hooks/useColors";
 
 type User = {
   email: string;
-  roles: string[];
+  roles: string;
 };
 
 interface IMsg {

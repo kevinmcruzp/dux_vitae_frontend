@@ -11,7 +11,7 @@ import { api } from "../services/apiClient";
 
 type User = {
   email: string;
-  roles: string[];
+  roles: string;
 };
 
 type SignInCredentials = {
@@ -32,7 +32,7 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext({} as AuthContextData);
 
-let authChannel: BroadcastChannel;
+// let authChannel: BroadcastChannel;
 
 export function signOut() {
   destroyCookie({}, "nextauth.token", {
@@ -42,7 +42,6 @@ export function signOut() {
     path: "/",
   });
   console.log("signed out");
-  authChannel.postMessage("signOut");
 
   Router.push("/");
 }
@@ -51,21 +50,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
 
   const isAuthenticated = !!user;
-
-  useEffect(() => {
-    authChannel = new BroadcastChannel("auth");
-
-    authChannel.onmessage = (message) => {
-      switch (message.data) {
-        case "signOut":
-          console.log("dentro del switch");
-          signOut();
-          break;
-        default:
-          break;
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const { "nextauth.token": token } = parseCookies();

@@ -17,7 +17,7 @@ export default function dashboard() {
 
   //Validar permisos de usuario
   const useCanSeeMetrics = useCan({
-    roles: ["administrator"],
+    roles: "administrator",
   });
 
   const { colors } = useColors();
@@ -122,6 +122,6 @@ export const getServerSideProps = withSSRAuth(
     };
   },
   {
-    roles: ["administrator"],
+    roles: "admin",
   }
 );

@@ -9,7 +9,7 @@ import { AuthTokenError } from "../services/errors/AuthTokenError";
 import { validateUserPermissions } from "./validateUserPermissions";
 
 type WithSSRAuthOption = {
-  roles?: string[];
+  roles?: string;
 };
 
 export function withSSRAuth<P>(
@@ -32,7 +32,7 @@ export function withSSRAuth<P>(
     }
 
     if (options) {
-      const user = decode<{ permissions: string[]; roles: string[] }>(token);
+      const user = decode<{ roles: string }>(token);
       const { roles } = options;
 
       const userHasValidPermissions = validateUserPermissions({
