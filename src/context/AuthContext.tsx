@@ -10,6 +10,8 @@ import {
 import { api } from "../services/apiClient";
 
 type User = {
+  name?: string;
+  lastName?: string;
   email: string;
   roles: string;
 };
@@ -58,9 +60,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api
         .get("/me")
         .then((response) => {
-          const { email, roles } = response.data;
+          const { name, lastName, email, roles } = response.data;
 
-          setUser({ email, roles });
+          setUser({ name, lastName, email, roles });
         })
         .catch(() => {
           signOut();
@@ -77,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       console.log(response);
 
-      const { token, refreshToken, roles } = response.data;
+      const { name, lastName, token, refreshToken, roles } = response.data;
 
       setCookie(undefined, "nextauth.token", token, {
         maxAge: 60 * 60 * 24 * 30, //30 dias
@@ -90,6 +92,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       setUser({
+        name,
+        lastName,
         email,
         roles,
       });

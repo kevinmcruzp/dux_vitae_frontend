@@ -16,13 +16,15 @@ import { HomeInfo } from "../../components/HomeInfo";
 import { Input } from "../../components/Input";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import { useColors } from "../../hooks/useColors";
+import { api } from "../../services/apiClient";
 
 type SignInData = {
   rut: string;
   email: string;
   password: string;
   passwordConfirmation: string;
-  fullName: string;
+  name: string;
+  lastName: string;
 };
 
 // var Fn = {
@@ -52,10 +54,14 @@ const SignInSchema = yup.object().shape({
     .string()
     .email("El formato debe ser email")
     .required("El email es requerido"),
-  fullName: yup
+  name: yup
     .string()
-    .required("El nombre completo es requerido")
+    .required("El nombre es requerido")
     .matches(/^[a-zA-Z\s]+$/g, "El nombre solo puede contener letras"),
+  lastName: yup
+    .string()
+    .required("El apellido es requerido")
+    .matches(/^[a-zA-Z\s]+$/g, "El apellido solo puede contener letras"),
   password: yup
     .string()
     .required("La contraseña es requerida")
@@ -83,9 +89,14 @@ export default function register() {
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
   const onSubmit: SubmitHandler<SignInData> = (data) => {
-    console.log(data);
-
-    Router.push("/nutritionist/files");
+    api
+      .post("/nutritionists", data)
+      .then((data) => {
+        if (data.status === 200) {
+          Router.push("/");
+        }
+      })
+      .catch(() => {});
   };
 
   return (
@@ -138,14 +149,23 @@ export default function register() {
 
             <Input
               type="text"
-              idName="fullName"
-              label="Nombre completo"
+              idName="name"
+              label="Nombre"
               color={colors.color}
-              error={errors.fullName}
-              {...register("fullName")}
+              error={errors.name}
+              {...register("name")}
+            />
+            <Input
+              type="text"
+              idName="lastName"
+              label="Apellido"
+              color={colors.color}
+              error={errors.lastName}
+              {...register("lastName")}
             />
 
             <Input
+              type="email"
               idName="email"
               label="Email"
               color={colors.color}

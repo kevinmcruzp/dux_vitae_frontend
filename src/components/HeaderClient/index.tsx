@@ -1,11 +1,12 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
+import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { MenuUser } from "../MenuUser";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 
 export function HeaderClient() {
   const { colors } = useColors();
-
+  const { user } = useAuth();
   const src = "https://avatars.githubusercontent.com/u/72741197?v=4";
 
   function profile() {
@@ -32,9 +33,9 @@ export function HeaderClient() {
       <Divider orientation="vertical" />
 
       <Flex flexDir="column" mr={2}>
-        <Text color={colors.color}>@kevin_cruz</Text>
+        <Text color={colors.color}>{user.name}</Text>
         <Text fontSize="14px" color={colors.divider}>
-          kevin@inacap.cl
+          {user.email}
         </Text>
       </Flex>
 
