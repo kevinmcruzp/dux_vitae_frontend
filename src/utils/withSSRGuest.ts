@@ -15,13 +15,11 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
     const token = cookies["nextauth.token"];
 
     if (token) {
-      const { roles } = decode<{ permissions: string[]; roles: string[] }>(
-        token
-      );
+      const { roles } = decode<{ roles: string }>(token);
 
-      console.log(roles[0]);
+      console.log(roles);
 
-      if (roles[0] === "administrator") {
+      if (roles === "admin") {
         return {
           redirect: {
             destination: "/admin/dashboard",
@@ -30,7 +28,7 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
         };
       }
 
-      if (roles[0] === "client") {
+      if (roles === "client") {
         return {
           redirect: {
             destination: "/client/home",
@@ -39,7 +37,7 @@ export function withSRRGuest<P>(fn: GetServerSideProps<P>) {
         };
       }
 
-      if (roles[0] === "nutritionist") {
+      if (roles === "nutritionist") {
         return {
           redirect: {
             destination: "/nutritionist/home",

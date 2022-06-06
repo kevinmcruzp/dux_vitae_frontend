@@ -41,12 +41,32 @@ export function withSSRAuth<P>(
       });
 
       if (!userHasValidPermissions) {
-        return {
-          redirect: {
-            destination: "/admin/client",
-            permanent: false,
-          },
-        };
+        if (user.roles === "admin") {
+          return {
+            redirect: {
+              destination: "/admin/dashboard",
+              permanent: false,
+            },
+          };
+        }
+
+        if (user.roles === "client") {
+          return {
+            redirect: {
+              destination: "/client/home",
+              permanent: false,
+            },
+          };
+        }
+
+        if (user.roles === "nutritionist") {
+          return {
+            redirect: {
+              destination: "/nutritionist/home",
+              permanent: false,
+            },
+          };
+        }
       }
     }
 
