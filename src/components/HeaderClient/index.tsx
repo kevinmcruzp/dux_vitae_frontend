@@ -33,9 +33,9 @@ export function HeaderClient() {
       <Divider orientation="vertical" />
 
       <Flex flexDir="column" mr={2}>
-        <Text color={colors.color}>{user.name}</Text>
+        <Text color={colors.color}>{user?.name}</Text>
         <Text fontSize="14px" color={colors.divider}>
-          {user.email}
+          {user?.email}
         </Text>
       </Flex>
 

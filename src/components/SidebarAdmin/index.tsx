@@ -7,24 +7,18 @@ import {
   RiUser3Line,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
-import { useCan } from "../../hooks/useCan";
 import { useColors } from "../../hooks/useColors";
 import { ActiveLink } from "../ActiveLink";
 
-type CanProps = {
-  permissions?: string[];
-  roles?: string[];
-};
-
-export function SidebarAdmin({ permissions, roles }: CanProps) {
+export function SidebarAdmin() {
   const isWebVersion = useBreakpointValue({ base: false, lg: true });
   const { colors } = useColors();
 
-  const userCanSeeComponent = useCan({ permissions, roles });
+  // const userCanSeeComponent = useCan({ roles });
 
-  if (!userCanSeeComponent) {
-    return null;
-  }
+  // if (!userCanSeeComponent) {
+  //   return null;
+  // }
 
   return (
     <Flex

@@ -10,8 +10,8 @@ import {
 import { api } from "../services/apiClient";
 
 type User = {
-  name?: string;
-  lastName?: string;
+  name: string;
+  lastName: string;
   email: string;
   roles: string;
 };
@@ -50,7 +50,7 @@ export function signOut() {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
-
+  console.log(user);
   const isAuthenticated = !!user;
 
   useEffect(() => {
@@ -76,8 +76,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         email,
         password,
       });
-
-      console.log(response);
 
       const { name, lastName, token, refreshToken, roles } = response.data;
 

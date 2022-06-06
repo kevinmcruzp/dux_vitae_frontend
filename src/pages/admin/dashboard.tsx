@@ -7,7 +7,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useAuth } from "../../context/AuthContext";
-import { useCan } from "../../hooks/useCan";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -16,9 +15,9 @@ export default function dashboard() {
   const { user } = useAuth();
 
   //Validar permisos de usuario
-  const useCanSeeMetrics = useCan({
-    roles: "administrator",
-  });
+  // const useCanSeeMetrics = useCan({
+  //   roles: "administrator",
+  // });
 
   const { colors } = useColors();
 
@@ -55,10 +54,6 @@ export default function dashboard() {
           </Center>
 
           <Divider color={colors.divider} />
-
-          <Flex p={4}>
-            {useCanSeeMetrics && <Text color={colors.color}>Info</Text>}
-          </Flex>
         </Flex>
       </SimpleGrid>
 

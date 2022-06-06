@@ -19,21 +19,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ColorsProvider>
         <AuthProvider>
           <Flex>
-            {router.pathname === "/admin/client" && (
-              <SidebarAdmin permissions={["metrics.list"]} />
-            )}
-            {router.pathname === "/admin/dashboard" && (
-              <SidebarAdmin permissions={["metrics.list"]} />
-            )}
-            {router.pathname === "/admin/nutritionist" && (
-              <SidebarAdmin permissions={["metrics.list"]} />
-            )}
-            {router.pathname === "/admin/claim" && (
-              <SidebarAdmin permissions={["metrics.list"]} />
-            )}
-            {router.pathname === "/admin/certificate" && (
-              <SidebarAdmin permissions={["metrics.list"]} />
-            )}
+            {router.pathname === "/admin/client" && <SidebarAdmin />}
+            {router.pathname === "/admin/dashboard" && <SidebarAdmin />}
+            {router.pathname === "/admin/nutritionist" && <SidebarAdmin />}
+            {router.pathname === "/admin/claim" && <SidebarAdmin />}
+            {router.pathname === "/admin/certificate" && <SidebarAdmin />}
 
             {router.pathname === "/client/home" && <SidebarClient />}
             {router.pathname === "/client/message" && <SidebarClient />}

@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
+import { setupAPIClient } from "../../services/api";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 type User = {
+  name: string;
+  lastName: string;
   email: string;
   roles: string;
 };
@@ -131,7 +135,7 @@ export default function message() {
                   (
                     <Flex key={index}>
                       <span>
-                        <Text>{chat.user.email}</Text>
+                        <Text>{chat.user.name}</Text>
                       </span>
                       <Text>: {chat.message}</Text>
                     </Flex>
@@ -168,3 +172,17 @@ export default function message() {
     </Flex>
   );
 }
+
+export const getServerSideProps = withSSRAuth(
+  async (ctx) => {
+    const apiClient = setupAPIClient(ctx);
+    const response = await apiClient.get("/me");
+
+    return {
+      props: {},
+    };
+  },
+  {
+    roles: "nutritionist",
+  }
+);

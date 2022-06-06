@@ -29,7 +29,7 @@ export function HeaderAdmin() {
       <Divider orientation="vertical" />
 
       <Flex flexDir="column" mr={2}>
-        <Text color={colors.color}>@kevin_cruz</Text>
+        <Text color={colors.color}>{user?.name}</Text>
         <Text fontSize="14px" color={colors.divider}>
           {user?.email}
         </Text>

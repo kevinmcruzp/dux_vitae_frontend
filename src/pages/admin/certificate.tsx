@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { TableContent } from "../../components/TableContent";
 import { useColors } from "../../hooks/useColors";
+import { setupAPIClient } from "../../services/api";
+import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function certificate() {
   const { colors } = useColors();
@@ -68,3 +70,17 @@ export default function certificate() {
     </Flex>
   );
 }
+
+export const getServerSideProps = withSSRAuth(
+  async (ctx) => {
+    const apiClient = setupAPIClient(ctx);
+    const response = await apiClient.get("/me");
+
+    return {
+      props: {},
+    };
+  },
+  {
+    roles: "admin",
+  }
+);
