@@ -1,10 +1,15 @@
 import { Button, Divider, Flex, Input, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
+
+interface IMsg {
+  room: string;
+  name: string;
+  message: string;
+}
 
 type User = {
   name: string;
@@ -13,84 +18,55 @@ type User = {
   roles: string;
 };
 
-interface IMsg {
-  user: User;
-  message: string;
-}
+type MsgProps = {
+  room: string;
+  name: string;
+  text: string;
+  createdAt: Date;
+};
 
-export default function message() {
+export default function message(user: User) {
   const [connected, setConnected] = useState<boolean>(true);
 
-  const [chat, setChat] = useState<IMsg[]>([]);
+  const [chat, setChat] = useState<MsgProps[]>([]);
   const [message, setMessage] = useState<string>("");
-
   const [sockets, setSockets] = useState<Socket>();
-
-  const { user } = useAuth();
-
   console.log(chat);
+  const room = "room1";
 
   useEffect(() => {
+    // console.log(user);
+    // setMyUser(user);
+    // console.log(myUser);
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
-
-    socket.io.on("error", (error) => {
-      console.log(error);
-    });
 
     socket.on("connect", () => {
       console.log(socket.connected); // true
     });
 
-    socket.on("received", (user, message) => {
-      if (message) {
-        // addChat(user, message);
-        setChat([...chat, { user, message }]);
-      }
+    socket.io.on("error", (error) => {
+      console.log(error);
+    });
+
+    socket.emit("room", room, user.name);
+
+    socket.on("message", (data) => {
+      console.log(data, "dentro de data");
+      setChat(data);
     });
 
     setSockets(socket);
   }, []);
 
-  // useEffect(() => {
-  //     const socket = io("http://localhost:3333");
-
-  //     console.log(socket.id);
-
-  //     socket.on("connect", () => {
-  //       console.log(socket.id); // "G5p5..."
-  //     });
-
-  //     setConnected(true);
-
-  //     socket.on("message", (data: IMsg) => {
-  //       setChat([...chat, data]);
-  //     });
-
-  //     socket.io.on("error", (error) => {
-  //       console.log(error);
-  //     });
-
-  //   conectingSocket();
-  // }, []);
-
-  // function addChat(user, message) {
-  //   const msg: IMsg = {
-  //     user,
-  //     message,
-  //   };
-
-  //   setChat([...chat, msg]);
-  // }
-
   const sendMessage = () => {
-    sockets.emit("message", user, message);
-
     const msg: IMsg = {
-      user,
+      room,
+      name: user.name,
       message,
     };
+    sockets.emit("message", msg);
 
-    setChat([...chat, msg]);
+    setMessage("");
 
     return () => {
       sockets.disconnect();
@@ -126,18 +102,22 @@ export default function message() {
         </Flex>
 
         <Divider orientation="vertical" color={colors.divider} />
-        <Flex flex="1" p={8} flexDir="column" gap={4}>
-          <Flex h="29rem" flexDir="column" maxW="40rem" overflowY={"auto"}>
+        <Flex
+          flex="1"
+          p={8}
+          flexDir="column"
+          gap={4}
+          maxW={"calc(100% - 150px)"}
+        >
+          <Flex flex="1" flexDir="column" overflowY={"auto"}>
             {chat.length ? (
               chat.map(
                 (chat, index) => (
-                  console.log(chat),
+                  console.log(chat, "dentro de chat"),
                   (
                     <Flex key={index}>
-                      <span>
-                        <Text>{chat.user.name}</Text>
-                      </span>
-                      <Text>: {chat.message}</Text>
+                      <Text>{chat.name}</Text>
+                      <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
                     </Flex>
                   )
                 )
@@ -149,13 +129,20 @@ export default function message() {
 
           <Flex>
             <Input
-              maxW={"50rem"}
-              type={"text"}
+              maxW="50rem"
+              type="text"
+              id="message"
               placeholder={connected ? "Type your message" : "Connecting..."}
               disabled={!connected}
               onChange={(e) => {
                 setMessage(e.target.value);
               }}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  sendMessage();
+                }
+              }}
+              value={message}
               // onKeyPress={(e) => {
               //   if (e.key === "Enter") {
               //     sendMessage();
@@ -177,9 +164,13 @@ export const getServerSideProps = withSSRAuth(
   async (ctx) => {
     const apiClient = setupAPIClient(ctx);
     const response = await apiClient.get("/me");
-
     return {
-      props: {},
+      props: {
+        name: response.data.name,
+        lastName: response.data.lastName,
+        email: response.data.email,
+        roles: response.data.roles,
+      },
     };
   },
   {
