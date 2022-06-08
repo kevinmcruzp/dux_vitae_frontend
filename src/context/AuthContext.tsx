@@ -50,7 +50,6 @@ export function signOut() {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
-  console.log(user);
   const isAuthenticated = !!user;
 
   useEffect(() => {
