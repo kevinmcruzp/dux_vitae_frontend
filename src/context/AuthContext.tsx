@@ -43,6 +43,8 @@ export function signOut() {
   destroyCookie({}, "nextauth.refreshToken", {
     path: "/",
   });
+
+  destroyCookie({}, "rut");
   console.log("signed out");
 
   Router.push("/");
@@ -76,7 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       });
 
-      const { name, lastName, token, refreshToken, roles } = response.data;
+      const { rut, name, lastName, token, refreshToken, roles } = response.data;
 
       setCookie(undefined, "nextauth.token", token, {
         maxAge: 60 * 60 * 24 * 30, //30 dias
@@ -84,6 +86,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       setCookie(undefined, "nextauth.refreshToken", refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, //30 dias
+        path: "/",
+      });
+
+      setCookie(undefined, "rut", rut, {
         maxAge: 60 * 60 * 24 * 30, //30 dias
         path: "/",
       });
