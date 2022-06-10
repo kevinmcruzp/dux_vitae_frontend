@@ -10,6 +10,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { parseCookies } from "nookies";
 import { TableContentNutritionist } from "../../components/TableContentNutritionist";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
@@ -18,7 +19,7 @@ import { withSSRAuth } from "../../utils/withSSRAuth";
 
 type NutritionistsProps = [{ rut: string; name: string; lastName: string }];
 
-export default function client({ nutritionists }) {
+export default function client({ nutritionists, appointment }) {
   const { colors } = useColors();
 
   return (
@@ -46,7 +47,7 @@ export default function client({ nutritionists }) {
           minW="200px"
         />
         <Table w="100%" variant="striped">
-          <TableCaption>Tabla de clientes</TableCaption>
+          <TableCaption>Tabla de nutricionistas</TableCaption>
           <Thead>
             <Tr>
               <Th>Rut</Th>
@@ -58,6 +59,7 @@ export default function client({ nutritionists }) {
           {nutritionists.map((nutritionists) => (
             <TableContentNutritionist
               key={nutritionists.rut}
+              request={nutritionists.rut === appointment?.nutritionistRut}
               rut={nutritionists.rut}
               name={nutritionists.name}
               lastName={nutritionists.lastName}
@@ -83,11 +85,20 @@ export const getServerSideProps = withSSRAuth(
     const apiClient = setupAPIClient(ctx);
     const client = await apiClient.get("/me");
 
-    const response = await api.get("/nutritionists");
-    let nutritionists = response.data;
+    const cookies = parseCookies(ctx);
+    const rut = cookies["rut"];
+    console.log(rut);
+    const responseAppointment = await api.get(`/appointments/${rut}`);
+
+    const appointment = responseAppointment.data;
+
+    const responseNutritionist = await api.get("/nutritionists");
+    const nutritionists = responseNutritionist.data;
+
     return {
       props: {
         nutritionists,
+        appointment,
       },
     };
   },
