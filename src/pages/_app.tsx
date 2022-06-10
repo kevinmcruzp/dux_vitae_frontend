@@ -47,6 +47,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             {router.pathname === "/nutritionist/schedule" && (
               <SidebarNutritionist />
             )}
+            {router.pathname === "/nutritionist/request" && (
+              <SidebarNutritionist />
+            )}
 
             <Flex flexDir="column">
               {router.pathname === "/admin/client" && <HeaderAdmin />}
@@ -75,6 +78,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <HeaderNutritionist />
               )}
               {router.pathname === "/nutritionist/schedule" && (
+                <HeaderNutritionist />
+              )}
+              {router.pathname === "/nutritionist/request" && (
                 <HeaderNutritionist />
               )}
               <Component {...pageProps} />

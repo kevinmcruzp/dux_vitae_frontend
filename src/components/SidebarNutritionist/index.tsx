@@ -5,6 +5,7 @@ import {
   RiMessage2Line,
   RiSettings3Line,
   RiUser3Line,
+  RiWechatLine,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
 import { useColors } from "../../hooks/useColors";
@@ -86,6 +87,21 @@ export function SidebarNutritionist() {
         >
           <RiCalendarCheckLine size="25px" />
           {isWebVersion && <Text fontSize="xl">Agenda</Text>}
+        </Flex>
+      </ActiveLink>
+
+      <ActiveLink href="/nutritionist/request">
+        <Flex
+          p={2}
+          cursor="pointer"
+          transition="0.2s filter"
+          bg={colors.primary}
+          _hover={{ filter: "brightness(120%)" }}
+          align="center"
+          gap={2}
+        >
+          <RiWechatLine size="25px" />
+          {isWebVersion && <Text fontSize="xl">Solicitudes</Text>}
         </Flex>
       </ActiveLink>
 
