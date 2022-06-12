@@ -1,21 +1,38 @@
-import { Button, Divider, Flex, Input, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Divider, Flex, Input, Text } from "@chakra-ui/react";
+import { parseCookies } from "nookies";
+import { useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { Button } from "../../components/Button";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
+import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 interface IMsg {
   room: string;
   name: string;
   message: string;
+  nutritionistRut: string;
+  clientRut: string;
 }
 
 type User = {
   name: string;
   lastName: string;
-  email: string;
-  roles: string;
+  email?: string;
+};
+
+type serverSideProps = {
+  user: User;
+  appointment: [
+    {
+      idAppointment: string;
+      state: boolean;
+      clientRut: string;
+      client: User;
+    }
+  ];
+  rut: string;
 };
 
 type MsgProps = {
@@ -25,55 +42,82 @@ type MsgProps = {
   createdAt: Date;
 };
 
-export default function message(user: User) {
-  const [connected, setConnected] = useState<boolean>(true);
+export default function message({ user, appointment, rut }: serverSideProps) {
+  const { colors } = useColors();
 
+  const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
   const [message, setMessage] = useState<string>("");
   const [sockets, setSockets] = useState<Socket>();
-  console.log(chat);
-  const room = "room1";
+  const [myRoom, setMyRoom] = useState<string>("");
+  const [clientRut, setClientRut] = useState<string>("");
 
-  useEffect(() => {
-    // console.log(user);
-    // setMyUser(user);
-    // console.log(myUser);
+  // useEffect(() => {
+  //   const socket = io("http://localhost:3333", { transports: ["websocket"] });
+
+  //   socket.on("connect", () => {
+  //     console.log(socket.connected, "connect"); // true
+  //   });
+
+  //   socket.io.on("error", (error) => {
+  //     console.log(error);
+  //   });
+
+  //   socket.on("message", (data) => {
+  //     console.log(data, "dentro de data");
+  //     setChat(data);
+  //   });
+
+  //   setSockets(socket);
+  // }, []);
+
+  const sendMessage = () => {
+    const msg: IMsg = {
+      room: myRoom,
+      name: user.name,
+      message,
+      nutritionistRut: rut,
+      clientRut,
+    };
+
+    sockets.emit("room", myRoom, user.name);
+    sockets.emit("message", msg);
+
+    setMessage("");
+  };
+
+  async function openChat(room: string) {
+    setChat([]);
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
 
     socket.on("connect", () => {
-      console.log(socket.connected); // true
+      console.log(socket.connected, "connect"); // true
     });
 
     socket.io.on("error", (error) => {
       console.log(error);
     });
 
-    socket.emit("room", room, user.name);
-
     socket.on("message", (data) => {
       console.log(data, "dentro de data");
-      setChat(data);
+      if (chat === []) {
+        setChat(data);
+      } else {
+        setChat((oldChat) => [...oldChat, data]);
+      }
     });
 
+    console.log(room);
+    const response = await api.get(`/chat/${room}`);
+    // console.log(response.data.Message);
+    if (response.data?.Message === null) {
+      setChat([]);
+    } else {
+      setChat(response.data?.Message);
+    }
     setSockets(socket);
-  }, []);
+  }
 
-  const sendMessage = () => {
-    const msg: IMsg = {
-      room,
-      name: user.name,
-      message,
-    };
-    sockets.emit("message", msg);
-
-    setMessage("");
-
-    return () => {
-      sockets.disconnect();
-    };
-  };
-
-  const { colors } = useColors();
   return (
     <Flex
       w={[
@@ -86,19 +130,35 @@ export default function message(user: User) {
       bg={colors.bg}
       justifyContent={"center"}
       alignItems={"center"}
+      color={colors.color}
     >
       <Flex
         w={["100%", "90%", "60%"]}
         h="31rem"
         bg={colors.bgHover}
         flexDir="row"
+        gap={2}
       >
         <Flex flexDir="column" p={4} gap={5} maxW="150px">
-          <Text>hola</Text>
-          <Text>Hola</Text>
-          <Text>Hola</Text>
-          <Text>Hola</Text>
-          <Text>Hola</Text>
+          {appointment.map((appointment) => {
+            if (appointment.state) {
+              return (
+                <Button
+                  key={appointment.clientRut}
+                  name={appointment.client.name}
+                  type="button"
+                  onClick={() => {
+                    setConnected(true);
+                    setMyRoom(appointment.idAppointment);
+                    setClientRut(appointment.clientRut);
+                    openChat(appointment.idAppointment);
+                  }}
+                  background="transparent"
+                  border={"none"}
+                />
+              );
+            }
+          })}
         </Flex>
 
         <Divider orientation="vertical" color={colors.divider} />
@@ -110,7 +170,7 @@ export default function message(user: User) {
           maxW={"calc(100% - 150px)"}
         >
           <Flex flex="1" flexDir="column" overflowY={"auto"}>
-            {chat.length ? (
+            {chat?.length ? (
               chat.map(
                 (chat, index) => (
                   console.log(chat, "dentro de chat"),
@@ -143,16 +203,16 @@ export default function message(user: User) {
                 }
               }}
               value={message}
-              // onKeyPress={(e) => {
-              //   if (e.key === "Enter") {
-              //     sendMessage();
-              //   }
-              // }}
             />
 
-            <Button type="submit" disabled={!connected} onClick={sendMessage}>
-              Enviar
-            </Button>
+            <Button
+              name="Enviar"
+              type="submit"
+              disabled={!connected}
+              onClick={() => {
+                sendMessage();
+              }}
+            />
           </Flex>
         </Flex>
       </Flex>
@@ -164,12 +224,22 @@ export const getServerSideProps = withSSRAuth(
   async (ctx) => {
     const apiClient = setupAPIClient(ctx);
     const response = await apiClient.get("/me");
+    const user = {
+      name: response.data.name,
+      lastName: response.data.lastName,
+      email: response.data.email,
+    };
+
+    const cookies = parseCookies(ctx);
+    const rut = cookies["rut"];
+    const responseAppointment = await api.get(`/appointments/${rut}`);
+    const appointment = responseAppointment.data;
+
     return {
       props: {
-        name: response.data.name,
-        lastName: response.data.lastName,
-        email: response.data.email,
-        roles: response.data.roles,
+        user,
+        appointment,
+        rut,
       },
     };
   },

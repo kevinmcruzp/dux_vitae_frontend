@@ -1,7 +1,8 @@
-import { Button, Divider, Flex, Input, Text } from "@chakra-ui/react";
+import { Divider, Flex, Input, Text } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { Button } from "../../components/Button";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
@@ -11,30 +12,27 @@ interface IMsg {
   room: string;
   name: string;
   message: string;
+  nutritionistRut: string;
+  clientRut: string;
 }
 
 type User = {
   name: string;
   lastName: string;
-  email: string;
-  roles: string;
+  email?: string;
 };
 
-type Nutritionist = {
-  rut: string;
-  name: string;
-  lastName: string;
-};
-
-type Appointment = {
-  nutritionistRut: string;
-  state: boolean;
-};
-
-type Props = {
+type serverSideProps = {
   user: User;
-  nutritionist: Nutritionist;
-  appointment: Appointment;
+  appointment: [
+    {
+      idAppointment: string;
+      state: boolean;
+      nutritionistRut: string;
+      nutritionist: User;
+    }
+  ];
+  rut: string;
 };
 
 type MsgProps = {
@@ -44,54 +42,59 @@ type MsgProps = {
   createdAt: Date;
 };
 
-export default function message({ user, nutritionist, appointment }: Props) {
-  const [choiceNutritionist, setChoiceNutritionist] = useState<string>("");
+export default function message({ user, appointment, rut }: serverSideProps) {
+  const { colors } = useColors();
 
+  const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
   const [message, setMessage] = useState<string>("");
   const [sockets, setSockets] = useState<Socket>();
+  const [myRoom, setMyRoom] = useState<string>("");
+  const [nutritionistRut, setNutritionistRut] = useState<string>("");
 
-  const room = "room1";
+  const sendMessage = () => {
+    const msg: IMsg = {
+      room: myRoom,
+      name: user.name,
+      message,
+      clientRut: rut,
+      nutritionistRut,
+    };
 
-  useEffect(() => {
-    // console.log(user);
-    // setMyUser(user);
-    // console.log(myUser);
+    sockets.emit("room", myRoom, user.name);
+    sockets.emit("message", msg);
+
+    setMessage("");
+  };
+
+  async function openChat(room: string) {
+    setChat([]);
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
 
     socket.on("connect", () => {
-      console.log(socket.connected); // true
+      console.log(socket.connected, "connect"); // true
     });
 
     socket.io.on("error", (error) => {
       console.log(error);
     });
 
-    socket.emit("room", room, user.name);
-
     socket.on("message", (data) => {
-      setChat(data);
+      console.log(data, "dentro de data");
+      setChat((oldChat) => [...oldChat, data]);
     });
 
+    console.log(room);
+    const response = await api.get(`/chat/${room}`);
+    // console.log(response.data.Message);
+    if (response.data?.Message === null) {
+      setChat([]);
+    } else {
+      setChat(response.data?.Message);
+    }
     setSockets(socket);
-  }, []);
+  }
 
-  const sendMessage = () => {
-    const msg: IMsg = {
-      room,
-      name: user.name,
-      message,
-    };
-    sockets.emit("message", msg);
-
-    setMessage("");
-
-    return () => {
-      sockets.disconnect();
-    };
-  };
-
-  const { colors } = useColors();
   return (
     <Flex
       w={[
@@ -112,18 +115,25 @@ export default function message({ user, nutritionist, appointment }: Props) {
         flexDir="row"
       >
         <Flex flexDir="column" p={4} gap={5} maxW="150px">
-          {nutritionist?.rut && (
-            <Button
-              type="button"
-              onClick={() => {
-                setChoiceNutritionist("open");
-              }}
-              background="transparent"
-              border={"none"}
-            >
-              {nutritionist.name}
-            </Button>
-          )}
+          {appointment.map((appointment) => {
+            if (appointment.state) {
+              return (
+                <Button
+                  key={appointment.nutritionistRut}
+                  name={appointment.nutritionist.name}
+                  type="button"
+                  onClick={() => {
+                    setConnected(true);
+                    setMyRoom(appointment.idAppointment);
+                    setNutritionistRut(appointment.nutritionistRut);
+                    openChat(appointment.idAppointment);
+                  }}
+                  background="transparent"
+                  border={"none"}
+                />
+              );
+            }
+          })}
         </Flex>
 
         <Divider orientation="vertical" color={colors.divider} />
@@ -134,75 +144,51 @@ export default function message({ user, nutritionist, appointment }: Props) {
           gap={4}
           maxW={"calc(100% - 150px)"}
         >
-          {nutritionist?.rut ? (
-            <>
-              {appointment?.state ? (
-                <Flex flex="1" flexDir="column" overflowY={"auto"}>
-                  {chat.length ? (
-                    chat.map(
-                      (chat, index) => (
-                        console.log(chat, "dentro de chat"),
-                        (
-                          <Flex key={index}>
-                            <Text>{chat.name}</Text>
-                            <Text maxW={"calc(100% - 150px)"}>
-                              : {chat.text}
-                            </Text>
-                          </Flex>
-                        )
-                      )
-                    )
-                  ) : (
-                    <Text>No messages yet</Text>
-                  )}
-                </Flex>
-              ) : (
-                <Flex
-                  flex="1"
-                  p={8}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Text>Aún no aceptan la solicitud</Text>
-                </Flex>
-              )}
+          <Flex flex="1" flexDir="column" overflowY={"auto"}>
+            {chat?.length ? (
+              chat.map(
+                (chat, index) => (
+                  console.log(chat, "dentro de chat"),
+                  (
+                    <Flex key={index}>
+                      <Text>{chat.name}</Text>
+                      <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
+                    </Flex>
+                  )
+                )
+              )
+            ) : (
+              <Text>No messages yet</Text>
+            )}
+          </Flex>
 
-              <Flex>
-                <Input
-                  maxW="50rem"
-                  type="text"
-                  id="message"
-                  onChange={(e) => {
-                    setMessage(e.target.value);
-                  }}
-                  disabled={!appointment?.state}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      sendMessage();
-                    }
-                  }}
-                  value={message}
-                />
+          <Flex>
+            <Input
+              maxW="50rem"
+              type="text"
+              id="message"
+              placeholder={connected ? "Type your message" : "Connecting..."}
+              disabled={!connected}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  sendMessage();
+                }
+              }}
+              value={message}
+            />
 
-                <Button
-                  type="submit"
-                  disabled={!appointment?.state}
-                  onClick={sendMessage}
-                >
-                  Enviar
-                </Button>
-              </Flex>
-            </>
-          ) : (
-            <Flex
-              flex="1"
-              p={8}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Text>No tienes un nutricionista asignado</Text>
-            </Flex>
-          )}
+            <Button
+              name="Enviar"
+              type="submit"
+              disabled={!connected}
+              onClick={() => {
+                sendMessage();
+              }}
+            />
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
@@ -217,31 +203,18 @@ export const getServerSideProps = withSSRAuth(
       name: response.data.name,
       lastName: response.data.lastName,
       email: response.data.email,
-      roles: response.data.roles,
     };
 
     const cookies = parseCookies(ctx);
     const rut = cookies["rut"];
     const responseAppointment = await api.get(`/appointments/${rut}`);
-    const appointment = {
-      nutritionistRut: responseAppointment.data.nutritionistRut,
-      state: responseAppointment.data.state,
-    };
-
-    const responseNutritionist = await api.get(
-      `/nutritionists/${appointment.nutritionistRut}`
-    );
-    const nutritionist = {
-      rut: responseNutritionist.data.rut,
-      name: responseNutritionist.data.name,
-      lastName: responseNutritionist.data.lastName,
-    };
-
+    const appointment = responseAppointment.data;
+    console.log(appointment, "dentro de appointment");
     return {
       props: {
         user,
-        nutritionist,
         appointment,
+        rut,
       },
     };
   },
