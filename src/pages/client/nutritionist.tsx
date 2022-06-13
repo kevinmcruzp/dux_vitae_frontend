@@ -11,6 +11,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import Router from "next/router";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import { TableContentNutritionist } from "../../components/TableContentNutritionist";
@@ -18,6 +19,10 @@ import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
+
+export function onReloadPage() {
+  Router.reload();
+}
 
 export default function client({ nutritionists, appointment }) {
   const { colors } = useColors();
@@ -69,9 +74,10 @@ export default function client({ nutritionists, appointment }) {
               <TableContentNutritionist
                 key={nutritionists.rut}
                 request={rut.includes(nutritionists.rut)}
-                rut={nutritionists.rut}
+                rutNutritionist={nutritionists.rut}
                 name={nutritionists.name}
                 lastName={nutritionists.lastName}
+                email={nutritionists.email}
               />
             ))}
           </Tbody>
@@ -100,8 +106,6 @@ export const getServerSideProps = withSSRAuth(
     const responseAppointment = await api.get(`/appointments/${rut}`);
 
     const appointment = responseAppointment.data;
-
-    console.log(appointment);
 
     const responseNutritionist = await api.get("/nutritionists");
     const nutritionists = responseNutritionist.data;
