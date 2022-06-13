@@ -1,13 +1,25 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
+import { api } from "../../services/apiClient";
 import { MenuUser } from "../MenuUser";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 
 export function HeaderClient() {
   const { colors } = useColors();
   const { user } = useAuth();
-  const src = "https://avatars.githubusercontent.com/u/72741197?v=4";
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    function searchUserData() {
+      api.get("/me").then((response) => {
+        setUserName(response.data.name + " " + response.data.lastName);
+      });
+    }
+
+    searchUserData();
+  }, []);
 
   function profile() {
     console.log("profile client");
@@ -39,7 +51,7 @@ export function HeaderClient() {
         </Text>
       </Flex>
 
-      <MenuUser profile={profile} src={src} />
+      <MenuUser userName={userName} profile={profile} />
     </Flex>
   );
 }

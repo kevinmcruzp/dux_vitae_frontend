@@ -5,10 +5,10 @@ import { useColors } from "../../hooks/useColors";
 
 type HeaderProps = {
   profile?: () => void;
-  src?: string;
+  userName?: string;
 };
 
-export function MenuUser({ profile, src }: HeaderProps) {
+export function MenuUser({ userName, profile }: HeaderProps) {
   const { colors } = useColors();
   const { signOut } = useAuth();
 
@@ -22,7 +22,7 @@ export function MenuUser({ profile, src }: HeaderProps) {
 
   return (
     <Menu autoSelect={false} direction="rtl" isLazy>
-      <MenuButton
+      {/* <MenuButton
         as={Avatar}
         src={src}
         variant="outline"
@@ -30,7 +30,10 @@ export function MenuUser({ profile, src }: HeaderProps) {
         cursor="pointer"
         w="50px"
         h="50px"
-      />
+      /> */}
+      <MenuButton>
+        <Avatar name={userName} />
+      </MenuButton>
       <MenuList bg={colors.bgHover} borderColor={colors.divider}>
         {router.pathname !== "/admin/claim" &&
           router.pathname !== "/admin/nutritionist" &&

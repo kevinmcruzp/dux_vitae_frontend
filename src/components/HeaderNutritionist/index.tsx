@@ -1,7 +1,9 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
+import { api } from "../../services/apiClient";
 import { MenuUser } from "../MenuUser";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 
@@ -10,7 +12,17 @@ export function HeaderNutritionist() {
   const router = useRouter();
   const { colors } = useColors();
 
-  const src = "https://avatars.githubusercontent.com/u/72741197?v=4";
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    function searchUserData() {
+      api.get("/me").then((response) => {
+        setUserName(response.data.name + " " + response.data.lastName);
+      });
+    }
+
+    searchUserData();
+  }, []);
 
   function profile() {
     router.push("/nutritionist/profile");
@@ -42,7 +54,7 @@ export function HeaderNutritionist() {
         </Text>
       </Flex>
 
-      <MenuUser profile={profile} src={src} />
+      <MenuUser userName={userName} profile={profile} />
     </Flex>
   );
 }
