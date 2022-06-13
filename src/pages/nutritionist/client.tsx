@@ -4,18 +4,29 @@ import {
   Table,
   TableCaption,
   TableContainer,
+  Tbody,
   Text,
   Tfoot,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { TableContent } from "../../components/TableContent";
+import { parseCookies } from "nookies";
+import { TableContentClient } from "../../components/TableContentClient";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
+import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-export default function client() {
+type ClientProps = {
+  rut: string;
+  name: string;
+  lastName: string;
+  email: string;
+  created_at: string;
+};
+
+export default function client({ appointmentData }) {
   const { colors } = useColors();
 
   return (
@@ -54,7 +65,18 @@ export default function client() {
             </Tr>
           </Thead>
 
-          <TableContent />
+          <Tbody color={colors.color}>
+            {appointmentData.map((clients) => (
+              <TableContentClient
+                key={clients.client.rut}
+                rut={clients.client.rut}
+                name={clients.client.name}
+                lastName={clients.client.lastName}
+                state={clients.state}
+                email={clients.client.email}
+              />
+            ))}
+          </Tbody>
 
           <Tfoot>
             <Tr>
@@ -75,9 +97,23 @@ export const getServerSideProps = withSSRAuth(
   async (ctx) => {
     const apiClient = setupAPIClient(ctx);
     const response = await apiClient.get("/me");
+    const user = {
+      name: response.data.name,
+      lastName: response.data.lastName,
+      email: response.data.email,
+    };
 
+    const cookies = parseCookies(ctx);
+    const rutNutritionist = cookies["rut"];
+    const responseAppointment = await api.get(
+      `/appointments/${rutNutritionist}`
+    );
+    const appointmentData = responseAppointment.data;
+    console.log(appointmentData);
     return {
-      props: {},
+      props: {
+        appointmentData,
+      },
     };
   },
   {
