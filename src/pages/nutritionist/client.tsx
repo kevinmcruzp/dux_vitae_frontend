@@ -20,14 +20,14 @@ export default function client() {
 
   return (
     <Flex
+      flex="1"
       w={[
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 250px)",
       ]}
-      h="calc(100vh - 60px)"
-      align="center"
+      align="top"
       justify="center"
       bg={colors.bg}
     >
@@ -54,11 +54,6 @@ export default function client() {
             </Tr>
           </Thead>
 
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
-          <TableContent />
           <TableContent />
 
           <Tfoot>

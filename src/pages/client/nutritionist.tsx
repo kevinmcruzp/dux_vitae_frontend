@@ -4,6 +4,7 @@ import {
   Table,
   TableCaption,
   TableContainer,
+  Tbody,
   Text,
   Tfoot,
   Th,
@@ -11,27 +12,33 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
+import { useEffect, useState } from "react";
 import { TableContentNutritionist } from "../../components/TableContentNutritionist";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-type NutritionistsProps = [{ rut: string; name: string; lastName: string }];
-
 export default function client({ nutritionists, appointment }) {
   const { colors } = useColors();
+  const [rut, setRut] = useState<string[]>([]);
 
+  useEffect(() => {
+    appointment.map((appointment) => {
+      setRut((rut) => [...rut, appointment.nutritionistRut]);
+    });
+  }, []);
+  console.log(rut);
   return (
     <Flex
+      flex="1"
       w={[
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 250px)",
       ]}
-      h="calc(100vh - 60px)"
-      align="center"
+      align="top"
       justify="center"
       bg={colors.bg}
     >
@@ -56,16 +63,18 @@ export default function client({ nutritionists, appointment }) {
               <Th></Th>
             </Tr>
           </Thead>
-          {nutritionists.map((nutritionists) => (
-            <TableContentNutritionist
-              key={nutritionists.rut}
-              request={nutritionists.rut === appointment?.nutritionistRut}
-              rut={nutritionists.rut}
-              name={nutritionists.name}
-              lastName={nutritionists.lastName}
-            />
-          ))}
 
+          <Tbody color={colors.color}>
+            {nutritionists.map((nutritionists) => (
+              <TableContentNutritionist
+                key={nutritionists.rut}
+                request={rut.includes(nutritionists.rut)}
+                rut={nutritionists.rut}
+                name={nutritionists.name}
+                lastName={nutritionists.lastName}
+              />
+            ))}
+          </Tbody>
           <Tfoot>
             <Tr>
               <Th>Rut</Th>
@@ -91,6 +100,8 @@ export const getServerSideProps = withSSRAuth(
     const responseAppointment = await api.get(`/appointments/${rut}`);
 
     const appointment = responseAppointment.data;
+
+    console.log(appointment);
 
     const responseNutritionist = await api.get("/nutritionists");
     const nutritionists = responseNutritionist.data;

@@ -20,10 +20,9 @@ import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export async function rejectRequest(id: string) {
   //Rota por se rechaza la solicitud
-  console.log(id);
   const response = await api.delete(`/appointments/${id}`);
   if (typeof window !== undefined) {
-    Router.reload(window.location.pathname);
+    Router.reload();
   }
 }
 
@@ -31,7 +30,7 @@ export async function acceptRequest(id: string) {
   //Rota por se aceita a solicitud
   const response = await api.put(`/appointments/${id}`);
   if (typeof window !== undefined) {
-    Router.reload(window.location.pathname);
+    Router.reload();
   }
 }
 
@@ -40,14 +39,14 @@ export default function Request({ appointment }) {
 
   return (
     <Flex
+      flex="1"
       w={[
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 250px)",
       ]}
-      h="calc(100vh - 60px)"
-      align="center"
+      align="top"
       justify="center"
       bg={colors.bg}
     >
