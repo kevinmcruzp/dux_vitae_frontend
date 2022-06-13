@@ -4,6 +4,7 @@ import {
   Table,
   TableCaption,
   TableContainer,
+  Tbody,
   Text,
   Tfoot,
   Th,
@@ -71,15 +72,18 @@ export default function Request({ appointment }) {
               <Th></Th>
             </Tr>
           </Thead>
-          {appointment.map((appointment) => (
-            <TableContentAppointment
-              key={appointment.idAppointment}
-              id={appointment.idAppointment}
-              title={appointment.title}
-              description={appointment.description}
-              state={appointment.state}
-            />
-          ))}
+
+          <Tbody color={colors.color}>
+            {appointment.map((appointment) => (
+              <TableContentAppointment
+                key={appointment.idAppointment}
+                id={appointment.idAppointment}
+                title={appointment.title}
+                description={appointment.description}
+                state={appointment.state}
+              />
+            ))}
+          </Tbody>
 
           <Tfoot>
             <Tr>

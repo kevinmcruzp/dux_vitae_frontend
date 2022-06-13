@@ -52,25 +52,6 @@ export default function message({ user, appointment, rut }: serverSideProps) {
   const [myRoom, setMyRoom] = useState<string>("");
   const [clientRut, setClientRut] = useState<string>("");
 
-  // useEffect(() => {
-  //   const socket = io("http://localhost:3333", { transports: ["websocket"] });
-
-  //   socket.on("connect", () => {
-  //     console.log(socket.connected, "connect"); // true
-  //   });
-
-  //   socket.io.on("error", (error) => {
-  //     console.log(error);
-  //   });
-
-  //   socket.on("message", (data) => {
-  //     console.log(data, "dentro de data");
-  //     setChat(data);
-  //   });
-
-  //   setSockets(socket);
-  // }, []);
-
   const sendMessage = () => {
     const msg: IMsg = {
       room: myRoom,
@@ -87,33 +68,33 @@ export default function message({ user, appointment, rut }: serverSideProps) {
   };
 
   async function openChat(room: string) {
-    setChat([]);
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
 
     socket.on("connect", () => {
-      console.log(socket.connected, "connect"); // true
+      console.log("Is connected: ", socket.connected);
     });
 
     socket.io.on("error", (error) => {
-      console.log(error);
+      console.log("Connection socket error: ", error);
     });
 
     socket.on("message", (data) => {
-      console.log(data, "dentro de data");
-      if (chat === []) {
-        setChat(data);
+      console.log("CHAT LENGTH: ", chat);
+      // console.log("DATA CHAT: ", data);
+      if (chat.length >= 1) {
+        console.log("MAIOR OU IGUAL A UM");
+        // setChat((oldChat) => [...oldChat, data]);
       } else {
-        setChat((oldChat) => [...oldChat, data]);
+        console.log("MENOR QUE UM");
+        // setChat(data);
       }
     });
 
-    console.log(room);
     const response = await api.get(`/chat/${room}`);
-    // console.log(response.data.Message);
-    if (response.data?.Message === null) {
+    if (response?.data?.Message === null) {
       setChat([]);
     } else {
-      setChat(response.data?.Message);
+      setChat(response?.data?.Message);
     }
     setSockets(socket);
   }
@@ -171,17 +152,12 @@ export default function message({ user, appointment, rut }: serverSideProps) {
         >
           <Flex flex="1" flexDir="column" overflowY={"auto"}>
             {chat?.length ? (
-              chat.map(
-                (chat, index) => (
-                  console.log(chat, "dentro de chat"),
-                  (
-                    <Flex key={index}>
-                      <Text>{chat.name}</Text>
-                      <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
-                    </Flex>
-                  )
-                )
-              )
+              chat.map((chat, index) => (
+                <Flex key={index}>
+                  <Text>{chat.name}</Text>
+                  <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
+                </Flex>
+              ))
             ) : (
               <Text>No messages yet</Text>
             )}

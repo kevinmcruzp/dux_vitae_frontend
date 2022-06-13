@@ -7,7 +7,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Tbody,
   Td,
   Text,
   Textarea,
@@ -61,31 +60,28 @@ export function TableContentAppointment({
 
   return (
     <>
-      {/* Hacer despues las solicitudes aceptas */}
       {state ? null : (
-        <Tbody color={colors.color}>
-          <Tr>
-            <Td>{title}</Td>
-            <Td>{description} </Td>
-            <Td>{stateReq}</Td>
+        <Tr>
+          <Td>{title}</Td>
+          <Td>{description} </Td>
+          <Td>{stateReq}</Td>
 
-            <Td
-              display="flex"
-              alignItems={"center"}
-              gap="1rem"
-              justifyContent={"flex-end"}
-            >
-              <Button
-                bg={colors.primary}
-                name="Verificar solicitud"
-                type="button"
-                onClick={() => {
-                  onOpen();
-                }}
-              />
-            </Td>
-          </Tr>
-        </Tbody>
+          <Td
+            display="flex"
+            alignItems={"center"}
+            gap="1rem"
+            justifyContent={"flex-end"}
+          >
+            <Button
+              bg={colors.primary}
+              name="Verificar solicitud"
+              type="button"
+              onClick={() => {
+                onOpen();
+              }}
+            />
+          </Td>
+        </Tr>
       )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -101,7 +97,7 @@ export function TableContentAppointment({
                 <Text>{stateReq}</Text>
               </Flex>
 
-              <Textarea disabled>{description}</Textarea>
+              <Textarea value={description} disabled></Textarea>
             </Flex>
           </ModalBody>
 

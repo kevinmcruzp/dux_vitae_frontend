@@ -91,6 +91,10 @@ export function SidebarNutritionist() {
       </ActiveLink>
 
       <ActiveLink href="/nutritionist/request">
+        {/* <IconButtonTooltip
+          aria-label="page-calendary"
+          icon={<RiCalendarCheckLine size="25px" />}
+        /> */}
         <Flex
           p={2}
           cursor="pointer"
