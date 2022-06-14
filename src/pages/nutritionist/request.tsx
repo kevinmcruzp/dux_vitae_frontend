@@ -81,6 +81,7 @@ export default function Request({ appointment }) {
                 title={appointment.title}
                 description={appointment.description}
                 state={appointment.state}
+                client={appointment.client}
               />
             ))}
           </Tbody>
@@ -110,7 +111,6 @@ export const getServerSideProps = withSSRAuth(
     const responseAppointment = await api.get(`/appointments/${rut}`);
 
     const appointment = responseAppointment.data;
-
     return {
       props: {
         appointment,

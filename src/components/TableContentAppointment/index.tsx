@@ -20,11 +20,20 @@ import { useColors } from "../../hooks/useColors";
 import { acceptRequest, rejectRequest } from "../../pages/nutritionist/request";
 import { Button } from "../Button";
 
+type ClientAppointmentProps = {
+  rut: string;
+  email: string;
+  name: string;
+  lastName: string;
+  created_at: string;
+};
+
 type TableContentProps = {
   id?: string;
   title?: string;
   description?: string;
   state?: Boolean;
+  client?: ClientAppointmentProps;
 };
 
 type AppointmentData = {
@@ -36,6 +45,7 @@ export function TableContentAppointment({
   title,
   description,
   state,
+  client,
 }: TableContentProps) {
   const {
     register,
@@ -86,35 +96,123 @@ export function TableContentAppointment({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent color={colors.color}>
-          <ModalHeader> Solicitud </ModalHeader>
+        <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+          <ModalHeader>
+            <Flex align={"center"} gap={3}>
+              {/* <Avatar name={name + " " + lastName} /> */}
+              Solicitud
+            </Flex>
+          </ModalHeader>
           <ModalCloseButton />
+          <ModalBody gap={2}>
+            <Flex
+              borderRadius="5"
+              bg={"#85000F"}
+              flexDir={"column"}
+              flex="1"
+              gap={3}
+            >
+              <Text fontSize="1.1rem" fontWeight={"bold"}>
+                Datos de la solicitud
+              </Text>
 
-          <ModalBody>
-            <Flex flexDir="column" gap={3}>
-              <Flex alignItems={"center"} justifyContent={"space-between"}>
-                <Text fontSize={20}>{title}</Text>
-                <Text>{stateReq}</Text>
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1rem"} fontWeight={"bold"}>
+                  {title}
+                </Text>
+                <Textarea
+                  border={"none"}
+                  disabled
+                  value={description}
+                ></Textarea>
+              </Flex>
+            </Flex>
+            <Flex
+              borderRadius={"5"}
+              marginTop={4}
+              bg={"#85000F"}
+              flexDir={"column"}
+              flex="1"
+              gap={3}
+            >
+              <Text fontSize="1.1rem" fontWeight={"bold"}>
+                Datos del cliente:
+              </Text>
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1rem"} fontWeight={"bold"}>
+                  Rut:
+                </Text>
+                <Text paddingLeft={2}>{client.rut}</Text>
               </Flex>
 
-              <Textarea value={description} disabled></Textarea>
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1rem"} fontWeight={"bold"}>
+                  Nombre:
+                </Text>
+                <Text paddingLeft={2}>
+                  {client.name + " " + client.lastName}
+                </Text>
+              </Flex>
+
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1rem"} fontWeight={"bold"}>
+                  Email:
+                </Text>
+                <Text paddingLeft={2}>{client.email}</Text>
+              </Flex>
+
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1rem"} fontWeight={"bold"}>
+                  Descripción
+                </Text>
+                <Text paddingLeft={2}>Nada.</Text>
+              </Flex>
             </Flex>
           </ModalBody>
 
-          <ModalFooter gap="2">
+          <ModalFooter gap={3}>
             <Button
-              bgColor={colors.primary}
-              type="button"
+              name="Rechazar"
+              border={"none"}
+              bg={colors.primary}
               onClick={() => {
                 rejectRequest(id);
-                onClose();
               }}
-              name="Rechazar"
             />
             <Button
-              bgColor={colors.tertiary}
-              type="button"
               name="Aceptar"
+              borderColor={"#a92a39"}
+              bg={colors.primary}
               onClick={() => {
                 acceptRequest(id);
               }}
