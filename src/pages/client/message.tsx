@@ -80,7 +80,6 @@ export default function message({ user, appointment, rut }: serverSideProps) {
     });
 
     socket.on("message", (data) => {
-      console.log(data, "dentro de data");
       setChat((oldChat) => [...oldChat, data]);
     });
 

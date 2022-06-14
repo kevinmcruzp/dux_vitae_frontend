@@ -68,6 +68,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
   };
 
   async function openChat(room: string) {
+    setChat([]);
     const socket = io("http://localhost:3333", { transports: ["websocket"] });
 
     socket.on("connect", () => {
@@ -79,15 +80,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
     });
 
     socket.on("message", (data) => {
-      console.log("CHAT LENGTH: ", chat);
-      // console.log("DATA CHAT: ", data);
-      if (chat.length >= 1) {
-        console.log("MAIOR OU IGUAL A UM");
-        // setChat((oldChat) => [...oldChat, data]);
-      } else {
-        console.log("MENOR QUE UM");
-        // setChat(data);
-      }
+      setChat((oldChat) => [...oldChat, data]);
     });
 
     const response = await api.get(`/chat/${room}`);
