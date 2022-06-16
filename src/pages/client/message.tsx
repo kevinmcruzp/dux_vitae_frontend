@@ -1,7 +1,7 @@
 import { Divider, Flex, Input, Text } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
-import { useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { Button } from "../../components/Button";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
@@ -42,15 +42,32 @@ type MsgProps = {
   createdAt: Date;
 };
 
+const socket = io("http://localhost:3333", { transports: ["websocket"] });
+
 export default function message({ user, appointment, rut }: serverSideProps) {
   const { colors } = useColors();
 
   const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
   const [message, setMessage] = useState<string>("");
-  const [sockets, setSockets] = useState<Socket>();
   const [myRoom, setMyRoom] = useState<string>("");
   const [nutritionistRut, setNutritionistRut] = useState<string>("");
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log(socket.connected, "connect"); // true
+    });
+
+    socket.io.on("error", (error) => {
+      console.log(error);
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      setChat((oldChat) => [...oldChat, data]);
+    });
+  }, []);
 
   const sendMessage = () => {
     const msg: IMsg = {
@@ -61,37 +78,23 @@ export default function message({ user, appointment, rut }: serverSideProps) {
       nutritionistRut,
     };
 
-    sockets.emit("room", myRoom, user.name);
-    sockets.emit("message", msg);
+    socket.emit("message", msg);
 
     setMessage("");
   };
 
   async function openChat(room: string) {
+    //Conectandome al room
+    socket.emit("room", room, user.name);
+
     setChat([]);
-    const socket = io("http://localhost:3333", { transports: ["websocket"] });
 
-    socket.on("connect", () => {
-      console.log(socket.connected, "connect"); // true
-    });
-
-    socket.io.on("error", (error) => {
-      console.log(error);
-    });
-
-    socket.on("message", (data) => {
-      setChat((oldChat) => [...oldChat, data]);
-    });
-
-    console.log(room);
     const response = await api.get(`/chat/${room}`);
-    // console.log(response.data.Message);
     if (response.data?.Message === null) {
       setChat([]);
     } else {
       setChat(response.data?.Message);
     }
-    setSockets(socket);
   }
 
   return (
@@ -145,17 +148,12 @@ export default function message({ user, appointment, rut }: serverSideProps) {
         >
           <Flex flex="1" flexDir="column" overflowY={"auto"}>
             {chat?.length ? (
-              chat.map(
-                (chat, index) => (
-                  console.log(chat, "dentro de chat"),
-                  (
-                    <Flex key={index}>
-                      <Text>{chat.name}</Text>
-                      <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
-                    </Flex>
-                  )
-                )
-              )
+              chat.map((chat, index) => (
+                <Flex key={index}>
+                  <Text>{chat.name}</Text>
+                  <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
+                </Flex>
+              ))
             ) : (
               <Text>No messages yet</Text>
             )}
@@ -208,7 +206,6 @@ export const getServerSideProps = withSSRAuth(
     const rut = cookies["rut"];
     const responseAppointment = await api.get(`/appointments/${rut}`);
     const appointment = responseAppointment.data;
-    console.log(appointment, "dentro de appointment");
     return {
       props: {
         user,

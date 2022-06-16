@@ -1,6 +1,6 @@
 import { Divider, Flex, Input, Text } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Button } from "../../components/Button";
 import { useColors } from "../../hooks/useColors";
@@ -42,6 +42,8 @@ type MsgProps = {
   createdAt: Date;
 };
 
+const socket = io("http://localhost:3333", { transports: ["websocket"] });
+
 export default function message({ user, appointment, rut }: serverSideProps) {
   const { colors } = useColors();
 
@@ -52,6 +54,24 @@ export default function message({ user, appointment, rut }: serverSideProps) {
   const [myRoom, setMyRoom] = useState<string>("");
   const [clientRut, setClientRut] = useState<string>("");
 
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log(socket.connected, "connect"); // true
+    });
+
+    socket.io.on("error", (error) => {
+      console.log(error);
+    });
+
+    setSockets(socket);
+  }, []);
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      setChat((oldChat) => [...oldChat, data]);
+    });
+  }, []);
+
   const sendMessage = () => {
     const msg: IMsg = {
       room: myRoom,
@@ -61,27 +81,16 @@ export default function message({ user, appointment, rut }: serverSideProps) {
       clientRut,
     };
 
-    sockets.emit("room", myRoom, user.name);
     sockets.emit("message", msg);
 
     setMessage("");
   };
 
   async function openChat(room: string) {
+    //Conectandome al room
+    sockets.emit("room", room, user.name);
+
     setChat([]);
-    const socket = io("http://localhost:3333", { transports: ["websocket"] });
-
-    socket.on("connect", () => {
-      console.log("Is connected: ", socket.connected);
-    });
-
-    socket.io.on("error", (error) => {
-      console.log("Connection socket error: ", error);
-    });
-
-    socket.on("message", (data) => {
-      setChat((oldChat) => [...oldChat, data]);
-    });
 
     const response = await api.get(`/chat/${room}`);
     if (response?.data?.Message === null) {
@@ -89,7 +98,6 @@ export default function message({ user, appointment, rut }: serverSideProps) {
     } else {
       setChat(response?.data?.Message);
     }
-    setSockets(socket);
   }
 
   return (
