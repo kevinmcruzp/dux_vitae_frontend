@@ -1,4 +1,5 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
@@ -10,6 +11,7 @@ export function HeaderClient() {
   const { colors } = useColors();
   const { user } = useAuth();
   const [userName, setUserName] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     function searchUserData() {
@@ -22,7 +24,7 @@ export function HeaderClient() {
   }, []);
 
   function profile() {
-    console.log("profile client");
+    router.push("/client/profile");
   }
 
   return (
