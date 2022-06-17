@@ -7,6 +7,13 @@ import {
   useState,
 } from "react";
 
+type User = {
+  nombre: string;
+};
+interface Client {
+  user: User;
+}
+
 type Colors = {
   bg: string;
   bgHover: string;
@@ -16,6 +23,7 @@ type Colors = {
   primary: string;
   secondary: string;
   tertiary: string;
+  messageContainer: string;
 };
 
 type ColorsContextProps = {
@@ -36,6 +44,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
   const divider = useColorModeValue("gray.400", "gray.200");
   const chat = useColorModeValue("gray.100", "gray.700");
   const color = useColorModeValue("gray.800", "white");
+  const messageContainer = useColorModeValue("#d9fdd3", "#005c4b");
   const primary = "red.700";
   const secondary = "yellow.800";
   const tertiary = "green.700";
@@ -50,6 +59,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
       primary,
       secondary,
       tertiary,
+      messageContainer,
     };
 
     setColors(data);
