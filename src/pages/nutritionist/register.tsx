@@ -45,7 +45,7 @@ type SignInData = {
 //   },
 // };
 
-const SignInSchema = yup.object().shape({
+const RegisterSchema = yup.object().shape({
   rut: yup
     .string()
     .required("El rut es requerido")
@@ -81,7 +81,7 @@ export default function register() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignInData>({
-    resolver: yupResolver(SignInSchema),
+    resolver: yupResolver(RegisterSchema),
   });
 
   const { colors } = useColors();

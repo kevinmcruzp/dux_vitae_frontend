@@ -271,3 +271,84 @@ email: response.data.email,
 roles: "nutritionist",
 }
 );
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+<Flex
+w={["100%", "90%", "60%"]}
+h="31rem"
+bg={colors.bgHover}
+flexDir="row"
+gap={2} >
+<Flex flexDir="column" p={4} gap={5} maxW="150px">
+{appointment.map((appointment) => {
+if (appointment.state) {
+return (
+<Button
+key={appointment.clientRut}
+name={appointment.client.name}
+type="button"
+onClick={() => {
+setConnected(true);
+setMyRoom(appointment.idAppointment);
+setClientRut(appointment.clientRut);
+openChat(appointment.idAppointment);
+}}
+background="transparent"
+border={"none"}
+/>
+);
+}
+})}
+</Flex>
+
+        <Divider orientation="vertical" color={colors.divider} />
+        <Flex
+          flex="1"
+          p={8}
+          flexDir="column"
+          gap={4}
+          maxW={"calc(100% - 150px)"}
+        >
+          <Flex flex="1" flexDir="column" overflowY={"auto"}>
+            {chat?.length ? (
+              chat.map((chat, index) => (
+                <Flex key={index}>
+                  <Text>{chat.name}</Text>
+                  <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
+                </Flex>
+              ))
+            ) : (
+              <Text>No messages yet</Text>
+            )}
+          </Flex>
+
+          <Flex>
+            <Input
+              maxW="50rem"
+              type="text"
+              id="message"
+              placeholder={connected ? "Type your message" : "Connecting..."}
+              disabled={!connected}
+              onChange={(e) => {
+                setMessage(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  sendMessage();
+                }
+              }}
+              value={message}
+            />
+
+            <Button
+              name="Enviar"
+              type="submit"
+              disabled={!connected}
+              onClick={() => {
+                sendMessage();
+              }}
+            />
+          </Flex>
+        </Flex>
+      </Flex>
