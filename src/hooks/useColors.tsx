@@ -11,6 +11,7 @@ type Colors = {
   bg: string;
   bgHover: string;
   divider: string;
+  chat: string;
   color: string;
   primary: string;
   secondary: string;
@@ -33,6 +34,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
   const bg = useColorModeValue("gray.50", "gray.900");
   const bgHover = useColorModeValue("white", "gray.800");
   const divider = useColorModeValue("gray.400", "gray.200");
+  const chat = useColorModeValue("gray.100", "gray.700");
   const color = useColorModeValue("gray.800", "white");
   const primary = "red.700";
   const secondary = "yellow.800";
@@ -43,6 +45,7 @@ export function ColorsProvider({ children }: ColorsProviderProps) {
       bg,
       bgHover,
       divider,
+      chat,
       color,
       primary,
       secondary,
