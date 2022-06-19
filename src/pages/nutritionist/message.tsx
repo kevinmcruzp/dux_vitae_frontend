@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { io } from "socket.io-client";
 import { ConnectImg } from "../../assets/ConnectImg";
+import { NoMessage } from "../../assets/NoMessage";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
@@ -15,6 +16,7 @@ interface IMsg {
   message: string;
   nutritionistRut: string;
   clientRut: string;
+  rutOwnerMessage: string;
 }
 
 type User = {
@@ -41,6 +43,7 @@ type MsgProps = {
   name: string;
   text: string;
   created_at?: Date;
+  rutOwnerMessage: string;
 };
 
 const socket = io("http://localhost:3333", { transports: ["websocket"] });
@@ -55,6 +58,16 @@ export default function message({ user, appointment, rut }: serverSideProps) {
   const [clientRut, setClientRut] = useState<string>("");
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const chatElement = document.getElementById("chat-feed");
+
+      if (chatElement) {
+        chatElement.scrollTop = chatElement.scrollHeight;
+      }
+    }
+  }, [chat]);
+
+  useEffect(() => {
     socket.on("connect", () => {
       console.log(socket.connected, "connect"); // true
     });
@@ -62,9 +75,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
     socket.io.on("error", (error) => {
       console.log(error);
     });
-  }, []);
 
-  useEffect(() => {
     socket.on("message", (data) => {
       setChat((oldChat) => [...oldChat, data]);
     });
@@ -77,6 +88,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
       message,
       nutritionistRut: rut,
       clientRut,
+      rutOwnerMessage: rut,
     };
 
     socket.emit("message", msg);
@@ -171,7 +183,24 @@ export default function message({ user, appointment, rut }: serverSideProps) {
           color={colors.color}
         >
           {/* Body del chat */}
-          <Flex flex="1" flexDir="column" overflowY={"auto"}>
+          <Flex
+            id="chat-feed"
+            flex="1"
+            flexDir="column"
+            overflowY={"auto"}
+            __css={{
+              "&::-webkit-scrollbar": {
+                w: "2",
+              },
+              "&::-webkit-scrollbar-track": {
+                w: "6",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                borderRadius: "10",
+                bg: `${colors.divider}`,
+              },
+            }}
+          >
             {chat?.length ? (
               <Flex flex="1" flexDir="column">
                 {chat.map((chat, index) => (
@@ -179,13 +208,19 @@ export default function message({ user, appointment, rut }: serverSideProps) {
                     key={index}
                     marginBottom={3}
                     color={colors.color}
-                    bg={colors.bgHover}
+                    bg={
+                      chat.rutOwnerMessage === rut
+                        ? colors.messageContainer
+                        : colors.bgHover
+                    }
                     minW="25rem"
-                    maxW={"calc(100% - 200px)"}
+                    maxW={"50%"}
                     w="-moz-fit-content"
                     width="fit-content"
                     p={"10px 15px"}
                     borderRadius={"6px"}
+                    marginLeft={chat.rutOwnerMessage === rut ? "auto" : "0"}
+                    marginRight="20px"
                   >
                     <Flex flexDir={"column"} w="100%">
                       <Text color={colors.secondary} fontSize="0.7rem">
@@ -206,11 +241,27 @@ export default function message({ user, appointment, rut }: serverSideProps) {
             ) : (
               <>
                 {connected ? (
-                  <Flex> No hay mensajes aún</Flex>
+                  <Flex
+                    flexDir="column"
+                    w="100%"
+                    h="100%"
+                    align="center"
+                    justify="center"
+                    gap={7}
+                  >
+                    <Flex as="span" bg={colors.chat} borderRadius={"50%"}>
+                      <NoMessage />
+                    </Flex>
+
+                    <Text color={colors.divider} fontSize={"2xl"}>
+                      No hay mensajes aún
+                    </Text>
+                  </Flex>
                 ) : (
                   <Flex
                     flexDir={"column"}
-                    flex="1"
+                    w="100%"
+                    h="100%"
                     align={"center"}
                     justifyContent={"center"}
                     gap={7}
@@ -231,7 +282,6 @@ export default function message({ user, appointment, rut }: serverSideProps) {
           {connected && (
             <Flex gap={3}>
               <Input
-                maxW="55rem"
                 type="text"
                 id="message"
                 placeholder={connected ? "Escribe tu mensaje" : "Conectando..."}
