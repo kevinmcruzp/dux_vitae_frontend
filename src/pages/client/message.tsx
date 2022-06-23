@@ -2,7 +2,7 @@ import { Avatar, Button, Divider, Flex, Input, Text } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { ConnectImg } from "../../assets/ConnectImg";
 import { NoMessage } from "../../assets/NoMessage";
 import { useColors } from "../../hooks/useColors";
@@ -46,8 +46,6 @@ type MsgProps = {
   rutOwnerMessage: string;
 };
 
-const socket = io("http://localhost:3333", { transports: ["websocket"] });
-
 export default function message({ user, appointment, rut }: ServerSideProps) {
   const { colors } = useColors();
 
@@ -56,6 +54,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
   const [message, setMessage] = useState<string>("");
   const [myRoom, setMyRoom] = useState<string>("");
   const [nutritionistRut, setNutritionistRut] = useState<string>("");
+  const [sockets, setSockets] = useState<Socket>(null as any);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -68,6 +67,9 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
   }, [chat]);
 
   useEffect(() => {
+    const socket = io("http://localhost:3333", { transports: ["websocket"] });
+    setSockets(socket);
+
     socket.on("connect", () => {
       console.log(socket.connected, "connect"); // true
     });
@@ -91,17 +93,18 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
       rutOwnerMessage: rut,
     };
 
-    socket.emit("message", msg);
+    sockets.emit("message", msg);
 
     setMessage("");
   };
 
   async function openChat(room: string) {
     //Conectandome al room
-    socket.emit("room", room, user.name);
+    sockets.emit("room", room, user.name);
 
     setChat([]);
 
+    //Testear si es problema está aqui
     const response = await api.get(`/chat/${room}`);
     if (response.data?.Message === null) {
       setChat([]);
