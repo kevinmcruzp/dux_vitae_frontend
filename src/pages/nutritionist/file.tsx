@@ -16,21 +16,19 @@ import { HomeInfo } from "../../components/HomeInfo";
 import { Input } from "../../components/Input";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import { useColors } from "../../hooks/useColors";
+import { api } from "../../services/apiClient";
 
 type SignInData = {
-  foto: string;
-  titulo: string;
+  photo: string;
+  file: string;
 };
 
 const SignInSchema = yup.object().shape({
-  foto: yup
-    .string()
-    .required("La imagen en formato jpg es requerida")
-    .matches(/(.*?)\.(jpg)$/g, "El formato debe ser jpg"),
-  titulo: yup
-    .string()
-    .required("El archivo título en formato pdf es requerido")
-    .matches(/\.pdf$/g, "El formato debe ser pdf"),
+  // photo: yup
+  //   .string()
+  //   .required("La imagen en formato jpg es requerida")
+  //   .matches(/(.*?)\.(jpg)$/g, "El formato debe ser jpg"),
+  file: yup.mixed().required("El archivo título en formato pdf es requerido"),
 });
 
 export default function file() {
@@ -47,9 +45,16 @@ export default function file() {
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
   const onSubmit: SubmitHandler<SignInData> = (data) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append("file", data.file[0]);
 
-    Router.push("/nutricionista/home");
+    console.log(formData);
+
+    api.post("/certificate", formData).then((res) => {
+      if (res.status === 200) {
+        Router.push("/");
+      }
+    });
   };
 
   return (
@@ -90,23 +95,23 @@ export default function file() {
             gap={4}
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Input
+            {/* <Input
               type="file"
               accept=".jpg"
-              idName="foto"
+              idName="photo"
               label="Foto (formato JPG)"
               color={colors.color}
-              error={errors.foto}
-              {...register("foto")}
-            />
+              error={errors.photo}
+              {...register("photo")}
+            /> */}
 
             <Input
               type="file"
-              idName="titulo"
+              idName="file"
               label="Título"
               color={colors.color}
-              error={errors.titulo}
-              {...register("titulo")}
+              error={errors.file}
+              {...register("file")}
             />
 
             <Button
