@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^2.8.8",
     "axios": "^0.20.0",
     "framer-motion": "6",
+    "js-file-download": "^0.4.12",
     "jwt-decode": "^3.1.2",
     "next": "12.1.0",
     "nookies": "^2.5.2",
