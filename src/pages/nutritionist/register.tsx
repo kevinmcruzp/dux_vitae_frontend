@@ -25,6 +25,7 @@ type SignInData = {
   passwordConfirmation: string;
   name: string;
   lastName: string;
+  file: string;
 };
 
 // var Fn = {
@@ -73,6 +74,7 @@ const RegisterSchema = yup.object().shape({
   passwordConfirmation: yup
     .string()
     .oneOf([null, yup.ref("password")], "Las contraseñas no coinciden"),
+  file: yup.mixed().required("El archivo título en formato pdf es requerido"),
 });
 
 export default function register() {
@@ -88,15 +90,31 @@ export default function register() {
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
-  const onSubmit: SubmitHandler<SignInData> = (data) => {
-    api
-      .post("/nutritionists", data)
-      .then((data) => {
-        if (data.status === 200) {
-          Router.push("/");
-        }
-      })
-      .catch(() => {});
+  const onSubmit: SubmitHandler<SignInData> = async (data) => {
+    const formData = new FormData();
+    formData.append("file", data.file[0]);
+
+    const response = await api.post("/certificate", formData);
+    console.log(response.data);
+    if (response.status === 200) {
+      const newData = {
+        ...data,
+        file: response.data,
+      };
+
+      console.log(newData);
+
+      api
+        .post("/nutritionists", newData)
+        .then((data) => {
+          if (data.status === 200) {
+            Router.push("/");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -188,6 +206,15 @@ export default function register() {
               color={colors.color}
               error={errors.passwordConfirmation}
               {...register("passwordConfirmation")}
+            />
+
+            <Input
+              type="file"
+              idName="file"
+              label="Título"
+              color={colors.color}
+              error={errors.file}
+              {...register("file")}
             />
 
             <Button
