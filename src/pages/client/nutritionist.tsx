@@ -70,16 +70,19 @@ export default function client({ nutritionists, appointment }) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {nutritionists.map((nutritionists) => (
-              <TableContentNutritionist
-                key={nutritionists.rut}
-                request={rut.includes(nutritionists.rut)}
-                rutNutritionist={nutritionists.rut}
-                name={nutritionists.name}
-                lastName={nutritionists.lastName}
-                email={nutritionists.email}
-              />
-            ))}
+            {nutritionists.map(
+              (nutritionists) =>
+                nutritionists?.certificate.state && (
+                  <TableContentNutritionist
+                    key={nutritionists.rut}
+                    request={rut.includes(nutritionists.rut)}
+                    rutNutritionist={nutritionists.rut}
+                    name={nutritionists.name}
+                    lastName={nutritionists.lastName}
+                    email={nutritionists.email}
+                  />
+                )
+            )}
           </Tbody>
           <Tfoot>
             <Tr>
