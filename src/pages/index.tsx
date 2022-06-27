@@ -49,8 +49,6 @@ export default function Home() {
 
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
     await signIn(data);
-
-    // router.push("/nutritionist/home");
   };
 
   return (
