@@ -18,7 +18,10 @@ import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import { ArchivePDF } from "../../assets/ArchivePDF";
 import { useColors } from "../../hooks/useColors";
-import { downloadCertificate } from "../../pages/admin/certificate";
+import {
+  AcceptNutritionistCertificate,
+  downloadCertificate,
+} from "../../pages/admin/certificate";
 import { Button } from "../Button";
 
 type NutritionistProps = {
@@ -150,6 +153,19 @@ export function TableContentCertificate({
                 paddingLeft={3}
               >
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
+                  Revisión certificado:
+                </Text>
+                <Text>{state ? "Aceptado" : "En espera"}</Text>
+              </Flex>
+
+              <Flex
+                bg={"#85000F"}
+                borderRadius={"5"}
+                flexDir={"column"}
+                flex="1"
+                paddingLeft={3}
+              >
+                <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Descripción
                 </Text>
                 <Text>Nada.</Text>
@@ -166,9 +182,12 @@ export function TableContentCertificate({
             />
             <Button
               name="Aceptar"
+              disabled={state}
               borderColor={"#a92a39"}
               bg={colors.primary}
-              onClick={() => {}}
+              onClick={() => {
+                AcceptNutritionistCertificate(idCertificate);
+              }}
             />
           </ModalFooter>
         </ModalContent>

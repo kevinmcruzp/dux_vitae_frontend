@@ -12,6 +12,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import fileDownload from "js-file-download";
+import Router from "next/router";
 import { TableContentCertificate } from "../../components/TableContentCertificate";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
@@ -39,6 +40,14 @@ type ListCertificates = {
     }
   ];
 };
+
+export function AcceptNutritionistCertificate(idCertificate: string) {
+  api.put(`/certificate/${idCertificate}`).then((res) => {
+    if (res.status === 200) {
+      Router.reload();
+    }
+  });
+}
 
 export function downloadCertificate(fileName: string, file: string) {
   api({
@@ -89,17 +98,20 @@ export default function certificate({ listCertificates }: ListCertificates) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {listCertificates.map((certificate) => (
-              <TableContentCertificate
-                key={certificate.idCertificate}
-                idCertificate={certificate.idCertificate}
-                file={certificate.file}
-                state={certificate.state}
-                created_at={certificate.created_at}
-                adminRut={certificate.adminRut}
-                nutritionist={certificate.nutritionist}
-              />
-            ))}
+            {listCertificates.map(
+              (certificate) =>
+                !certificate?.state && (
+                  <TableContentCertificate
+                    key={certificate.idCertificate}
+                    idCertificate={certificate.idCertificate}
+                    file={certificate.file}
+                    state={certificate.state}
+                    created_at={certificate.created_at}
+                    adminRut={certificate.adminRut}
+                    nutritionist={certificate.nutritionist}
+                  />
+                )
+            )}
           </Tbody>
           <Tfoot>
             <Tr>
@@ -123,8 +135,6 @@ export const getServerSideProps = withSSRAuth(
     const certificates = await apiClient.get("/certificate");
 
     const listCertificates = certificates.data;
-
-    console.log(listCertificates);
 
     return {
       props: {
