@@ -1,8 +1,10 @@
 import { Avatar, Button, Divider, Flex, Input, Text } from "@chakra-ui/react";
+import Router from "next/router";
 import { parseCookies } from "nookies";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { io, Socket } from "socket.io-client";
+import { ArchivePDF } from "../../assets/ArchivePDF";
 import { ConnectImg } from "../../assets/ConnectImg";
 import { NoMessage } from "../../assets/NoMessage";
 import { useColors } from "../../hooks/useColors";
@@ -48,13 +50,15 @@ type MsgProps = {
 
 export default function message({ user, appointment, rut }: ServerSideProps) {
   const { colors } = useColors();
-
   const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
   const [message, setMessage] = useState<string>("");
   const [myRoom, setMyRoom] = useState<string>("");
   const [nutritionistRut, setNutritionistRut] = useState<string>("");
   const [sockets, setSockets] = useState<Socket>(null as any);
+  const [clientRut, setClientRut] = useState<string>("");
+
+  const fileRef = useRef();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -81,6 +85,8 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
     socket.on("message", (data) => {
       setChat((oldChat) => [...oldChat, data]);
     });
+
+    setClientRut(rut);
   }, []);
 
   const sendMessage = () => {
@@ -98,6 +104,37 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
     setMessage("");
   };
 
+  const sendFileMessage = (data) => {
+    const { files } = data.target;
+
+    const formData = new FormData();
+    formData.append("file", files[0]);
+
+    api.post("/files", formData).then(async (res) => {
+      const createFileResponse = await api.post("file", {
+        filename: res.data.filename,
+        originalname: res.data.originalname,
+        clientRut,
+        nutritionistRut,
+      });
+
+      if (res.status === 200) {
+        const msg: IMsg = {
+          room: myRoom,
+          name: user.name,
+          message: res.data.originalname,
+          clientRut: rut,
+          nutritionistRut,
+          rutOwnerMessage: rut,
+        };
+
+        sockets.emit("message", msg);
+
+        setMessage("");
+      }
+    });
+  };
+
   async function openChat(room: string) {
     //Conectandome al room
     sockets.emit("room", room, user.name);
@@ -106,12 +143,24 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
 
     //Testear si es problema está aqui
     const response = await api.get(`/chat/${room}`);
+
     if (response.data?.Message === null) {
       setChat([]);
     } else {
       setChat(response.data?.Message);
     }
   }
+
+  //01 Hacer download del archivo (Realizar despues)
+  // function downloadCertificate(fileName: string, file: string) {
+  //   api({
+  //     url: `/file/${file}`,
+  //     method: "GET",
+  //     responseType: "blob",
+  //   }).then((res) => {
+  //     fileDownload(res.data, fileName);
+  //   });
+  // }
 
   return (
     <Flex
@@ -229,7 +278,25 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
                       <Text color={colors.secondary} fontSize="0.7rem">
                         {chat.name}
                       </Text>
-                      <Text fontSize="0.9rem">{chat.text}</Text>
+                      {chat.text.split(".")[1] == "pdf" ? (
+                        <Flex
+                          align={"center"}
+                          gap={3}
+                          onClick={() => {
+                            //01 Hacer download del archivo (Realizar despues)
+                            // downloadCertificate(fileName[0], file);
+                            // Enviar originalname para que se guarde en base de datos de mensaje
+                            Router.push("/client/minute");
+                          }}
+                          _hover={{ cursor: "pointer" }}
+                        >
+                          <ArchivePDF />
+                          <Text fontSize="0.9rem">{chat.text}</Text>
+                        </Flex>
+                      ) : (
+                        <Text fontSize="0.9rem">{chat.text}</Text>
+                      )}
+
                       <Text
                         color={colors.divider}
                         fontSize="0.6rem"
@@ -285,6 +352,14 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
           {connected && (
             <Flex gap={3}>
               <Input
+                ref={fileRef}
+                type="file"
+                name="file"
+                w="auto"
+                onChange={sendFileMessage}
+              />
+
+              <Input
                 type="text"
                 id="message"
                 placeholder={connected ? "Escribe tu mensaje" : "Conectando..."}
@@ -308,7 +383,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
 
               <Button
                 type="button"
-                disabled={!connected}
+                disabled={!connected || message == ""}
                 bg={"transparent"}
                 border="none"
                 onClick={() => {
