@@ -10,7 +10,6 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { TableContent } from "../../components/TableContent";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -53,8 +52,6 @@ export default function client() {
               <Th></Th>
             </Tr>
           </Thead>
-
-          <TableContent />
 
           <Tfoot>
             <Tr>

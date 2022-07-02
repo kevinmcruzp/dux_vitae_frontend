@@ -95,7 +95,6 @@ export default function register() {
     formData.append("file", data.file[0]);
 
     const response = await api.post("/certificate", formData);
-    console.log(response.data);
     if (response.status === 200) {
       const newData = {
         ...data,
