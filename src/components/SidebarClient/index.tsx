@@ -69,7 +69,7 @@ export function SidebarClient() {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          {isWebVersion && <Text fontSize="xl">Mensages</Text>}
+          {isWebVersion && <Text fontSize="xl">Mensajes</Text>}
         </Flex>
       </ActiveLink>
 

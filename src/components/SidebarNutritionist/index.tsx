@@ -71,7 +71,7 @@ export function SidebarNutritionist() {
           gap={2}
         >
           <RiMessage2Line size="25px" />
-          {isWebVersion && <Text fontSize="xl">Mensage</Text>}
+          {isWebVersion && <Text fontSize="xl">Mensaje</Text>}
         </Flex>
       </ActiveLink>
 
