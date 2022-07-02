@@ -255,6 +255,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
           >
             {chat?.length ? (
               <Flex flex="1" flexDir="column">
+                {console.log(chat)}
                 {chat.map((chat, index) => (
                   <Flex
                     key={index}
@@ -278,7 +279,8 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
                       <Text color={colors.secondary} fontSize="0.7rem">
                         {chat.name}
                       </Text>
-                      {chat.text.split(".")[1] == "pdf" ? (
+
+                      {chat.text?.split(".")[1] == "pdf" ? (
                         <Flex
                           align={"center"}
                           gap={3}
@@ -340,7 +342,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
                       <ConnectImg />
                     </Flex>
                     <Text color={colors.divider} fontSize={"2xl"}>
-                      Conectate con tus Clientes
+                      Conectate con un nutricionista
                     </Text>
                   </Flex>
                 )}
