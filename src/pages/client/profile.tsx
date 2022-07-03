@@ -2,7 +2,7 @@ import { Avatar, Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { RiMailLine } from "react-icons/ri";
 import * as yup from "yup";
@@ -11,7 +11,6 @@ import { Input } from "../../components/Input";
 import { Select } from "../../components/Select";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 type ClientData = {
@@ -75,18 +74,18 @@ export default function profile({ clientData }) {
   });
 
   const { colors } = useColors();
-  const nameClient = clientData.name + " " + clientData.lastName;
+  const nameClient = clientData?.name + " " + clientData?.lastName;
   const [dateCreatedClient, setDateCreatedClient] = useState("");
 
   useEffect(() => {
-    const date = new Date(clientData.created_at);
+    const date = new Date(clientData?.created_at);
     setDateCreatedClient(
       date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
     );
   }, []);
 
-  const onSubmit: SubmitHandler<UpdateData> = (data) => {
-    console.log(data);
+  // const onSubmit: SubmitHandler<UpdateData> = (data) => {
+    // console.log(data);
     // api
     //   .post("/clients", data)
     //   .then((data) => {
@@ -95,7 +94,7 @@ export default function profile({ clientData }) {
     //     }
     //   })
     //   .catch(() => {});
-  };
+  // };
 
   return (
     <Flex
@@ -118,7 +117,8 @@ export default function profile({ clientData }) {
         padding={2}
         flexDir={"column"}
         flex="1"
-        onSubmit={handleSubmit(onSubmit)}
+        // onSubmit={handleSubmit(onSubmit)}
+        onSubmit={() => {}}
       >
         {/* Información general */}
         <Flex h={"3rem"} align={"end"}>
@@ -134,7 +134,7 @@ export default function profile({ clientData }) {
               idName="name"
               label="Nombre"
               color={colors.color}
-              defaultValue={clientData.name}
+              defaultValue={clientData?.name}
               error={errors.name}
               {...register("name")}
             />
@@ -143,7 +143,7 @@ export default function profile({ clientData }) {
               idName="lastName"
               label="Apellido"
               color={colors.color}
-              defaultValue={clientData.lastName}
+              defaultValue={clientData?.lastName}
               error={errors.lastName}
               {...register("lastName")}
             />
@@ -179,7 +179,7 @@ export default function profile({ clientData }) {
               idName="email"
               label="Email"
               color={colors.color}
-              defaultValue={clientData.email}
+              defaultValue={clientData?.email}
               error={errors.email}
               {...register("email")}
             />
@@ -283,7 +283,7 @@ export default function profile({ clientData }) {
 
           <Flex alignItems="center" justifyContent="center" gap="5px">
             <RiMailLine />
-            <Text fontSize="0.9rem">{clientData.email}</Text>
+            <Text fontSize="0.9rem">{clientData?.email}</Text>
           </Flex>
 
           <Text fontSize="0.7rem">Cuenta creada el {dateCreatedClient}</Text>
@@ -295,26 +295,28 @@ export default function profile({ clientData }) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
+    try {
+      const apiClient = setupAPIClient(ctx);
 
-    const cookies = parseCookies(ctx);
-    const rutClient = cookies["rut"];
+      const cookies = parseCookies(ctx);
+      const rutClient = cookies["rut"];
 
-    const response = await api.get(`/clients/${rutClient}`);
+      const response = await apiClient.get(`/clients/${rutClient}`);
 
-    const clientData: ClientData = {
-      rut: response.data.rut,
-      email: response.data.email,
-      name: response.data.name,
-      lastName: response.data.lastName,
-      created_at: response.data.created_at,
-    };
+      const clientData = response.data
 
-    return {
-      props: {
-        clientData,
-      },
-    };
+      return {
+        props: {
+          clientData,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          clientData: [], // Leh: Devolvendo vazio
+        },
+      };
+    }
   },
   {
     roles: "client",

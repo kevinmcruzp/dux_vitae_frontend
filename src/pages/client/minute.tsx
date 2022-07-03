@@ -4,6 +4,7 @@ import { parseCookies } from "nookies";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { ArchivePDF } from "../../assets/ArchivePDF";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -20,13 +21,20 @@ type FileListProps = {
 };
 
 function downloadFile(originalname: string, file: string) {
-  api({
-    url: `/file/${file}`,
-    method: "GET",
-    responseType: "blob",
-  }).then((res) => {
-    fileDownload(res.data, originalname);
-  });
+  const { toastSuccess, toastError } = useToasts()
+
+  try {
+    api({
+      url: `/file/${file}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((res) => {
+      toastSuccess({ description: "Archivo descargado"})
+      fileDownload(res.data, originalname);
+    });
+  } catch(err) {
+    toastError({ description: "Error al descargar archivo"})
+  }
 }
 
 export default function minute({ fileList }: FileListProps) {
@@ -70,7 +78,7 @@ export default function minute({ fileList }: FileListProps) {
           borderRadius={5}
         >
           {/*tabla de certificado*/}
-          {fileList.map((file) => (
+          {fileList?.map((file) => (
             <span key={file.idFile}>
               <Flex
                 align={"center"}
@@ -100,20 +108,27 @@ export default function minute({ fileList }: FileListProps) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const response = await apiClient.get("/me");
 
-    const cookies = parseCookies(ctx);
-    const rut = cookies["rut"];
+      const cookies = parseCookies(ctx);
+      const rut = cookies["rut"];
 
-    const files = await api.get(`/files/${rut}`);
+      const files = await apiClient.get(`/files/${rut}`);
 
-    const fileList = files.data;
-    console.log(fileList);
-
-    return {
-      props: { fileList },
-    };
+      const fileList = files.data;
+      // console.log(fileList);
+      return {
+        props: { fileList },
+      };
+    } catch(err) {
+      return {
+        props: {
+          fileList: [] // Leh: Retorno vazio
+        },
+      };
+    }
   },
   {
     roles: "client",

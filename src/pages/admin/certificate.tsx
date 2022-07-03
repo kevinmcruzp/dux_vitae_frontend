@@ -9,12 +9,13 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr
 } from "@chakra-ui/react";
 import fileDownload from "js-file-download";
 import Router from "next/router";
 import { TableContentCertificate } from "../../components/TableContentCertificate";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -42,21 +43,36 @@ type ListCertificates = {
 };
 
 export function AcceptNutritionistCertificate(idCertificate: string) {
-  api.put(`/certificate/${idCertificate}`).then((res) => {
-    if (res.status === 200) {
-      Router.reload();
-    }
-  });
+  const { toastSuccess, toastError } = useToasts()
+
+  try {
+    api.put(`/certificate/${idCertificate}`).then((res) => {
+      if (res.status === 200) {
+        toastSuccess({ description: "Certificado aceptado"})
+
+        Router.reload();
+      }
+    });
+  } catch (err) {
+    toastError({ description: "Error al aceptar certificado"})
+  }
 }
 
 export function downloadCertificate(fileName: string, file: string) {
-  api({
-    url: `/certificate/${file}`,
-    method: "GET",
-    responseType: "blob",
-  }).then((res) => {
-    fileDownload(res.data, fileName);
-  });
+  const { toastSuccess, toastError } = useToasts()
+
+  try {
+    api({
+      url: `/certificate/${file}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((res) => {
+      fileDownload(res.data, fileName);
+      toastSuccess({ description: "Certificado descargado"})
+    });
+  } catch(err) {
+    toastError({ description: "Error al descargar certificado"})
+  }
 }
 
 export default function certificate({ listCertificates }: ListCertificates) {
@@ -98,7 +114,7 @@ export default function certificate({ listCertificates }: ListCertificates) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {listCertificates.map(
+            {listCertificates?.map(
               (certificate) =>
                 !certificate?.state && (
                   <TableContentCertificate
@@ -129,18 +145,26 @@ export default function certificate({ listCertificates }: ListCertificates) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const response = await apiClient.get("/me");
 
-    const certificates = await apiClient.get("/certificate");
+      const certificates = await apiClient.get("/certificate");
 
-    const listCertificates = certificates.data;
+      const listCertificates = certificates.data;
 
-    return {
-      props: {
-        listCertificates,
-      },
-    };
+      return {
+        props: {
+          listCertificates,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          listCertificates: [], // Leh: Devolvo como array vazio
+        },
+      };
+    }
   },
   {
     roles: "admin",

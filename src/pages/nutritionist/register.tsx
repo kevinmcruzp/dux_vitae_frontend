@@ -3,7 +3,7 @@ import {
   Flex,
   IconButton,
   useBreakpointValue,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router from "next/router";
@@ -16,6 +16,7 @@ import { HomeInfo } from "../../components/HomeInfo";
 import { Input } from "../../components/Input";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { api } from "../../services/apiClient";
 
 type SignInData = {
@@ -86,6 +87,7 @@ export default function register() {
     resolver: yupResolver(RegisterSchema),
   });
 
+  const { toastSuccess, toastError } = useToasts()
   const { colors } = useColors();
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
@@ -94,25 +96,28 @@ export default function register() {
     const formData = new FormData();
     formData.append("file", data.file[0]);
 
-    const response = await api.post("/certificate", formData);
-    if (response.status === 200) {
-      const newData = {
-        ...data,
-        file: response.data,
-      };
+    try {
+      const response = await api.post("/certificate", formData);
+      if (response.status === 200) {
+        const newData = {
+          ...data,
+          file: response.data,
+        };
+        // console.log(newData);
 
-      console.log(newData);
-
-      api
-        .post("/nutritionists", newData)
-        .then((data) => {
-          if (data.status === 200) {
-            Router.push("/");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        api
+          .post("/nutritionists", newData)
+          .then((data) => {
+            if (data.status === 200) {
+              Router.push("/");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch(err) {
+      toastError({ description: "Error al subir el archivo"});
     }
   };
 

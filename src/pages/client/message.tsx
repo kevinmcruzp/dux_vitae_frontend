@@ -8,6 +8,7 @@ import { ArchivePDF } from "../../assets/ArchivePDF";
 import { ConnectImg } from "../../assets/ConnectImg";
 import { NoMessage } from "../../assets/NoMessage";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
@@ -49,6 +50,7 @@ type MsgProps = {
 };
 
 export default function message({ user, appointment, rut }: ServerSideProps) {
+  const { toastSuccess, toastError } = useToasts()
   const { colors } = useColors();
   const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
@@ -92,7 +94,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
   const sendMessage = () => {
     const msg: IMsg = {
       room: myRoom,
-      name: user.name,
+      name: user?.name,
       message,
       clientRut: rut,
       nutritionistRut,
@@ -110,44 +112,53 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
     const formData = new FormData();
     formData.append("file", files[0]);
 
-    api.post("/files", formData).then(async (res) => {
-      const createFileResponse = await api.post("file", {
-        filename: res.data.filename,
-        originalname: res.data.originalname,
-        clientRut,
-        nutritionistRut,
-      });
-
-      if (res.status === 200) {
-        const msg: IMsg = {
-          room: myRoom,
-          name: user.name,
-          message: res.data.originalname,
-          clientRut: rut,
+    try {
+      // Leh: Isto está uma bagunça, nao coloquei o toastSuccess porque nao sei onde colocar kkkk
+      api.post("/files", formData).then(async (res) => {
+        const createFileResponse = await api.post("file", {
+          filename: res.data.filename,
+          originalname: res.data.originalname,
+          clientRut,
           nutritionistRut,
-          rutOwnerMessage: rut,
-        };
+        });
 
-        sockets.emit("message", msg);
+        if (res.status === 200) {
+          const msg: IMsg = {
+            room: myRoom,
+            name: user?.name,
+            message: res.data.originalname,
+            clientRut: rut,
+            nutritionistRut,
+            rutOwnerMessage: rut,
+          };
 
-        setMessage("");
-      }
-    });
+          sockets.emit("message", msg);
+
+          setMessage("");
+        }
+      });
+    } catch(err) {
+      toastError({ description: "Error al enviar el archivo"})
+    }
   };
 
   async function openChat(room: string) {
     //Conectandome al room
-    sockets.emit("room", room, user.name);
+    sockets.emit("room", room, user?.name);
 
     setChat([]);
 
     //Testear si es problema está aqui
-    const response = await api.get(`/chat/${room}`);
+    try {
+      const response = await api.get(`/chat/${room}`);
 
-    if (response.data?.Message === null) {
-      setChat([]);
-    } else {
-      setChat(response.data?.Message);
+      if (response.data?.Message === null) {
+        setChat([]);
+      } else {
+        setChat(response.data?.Message);
+      }
+    } catch(err) {
+      toastError({ description: "Error al abrir el chat"})
     }
   }
 
@@ -179,8 +190,8 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
       <Flex w="100%" h="100%" bg={colors.bg} flexDir="row">
         {/* sidebar do chat */}
         <Flex flexDir="column" maxW="300px">
-          {appointment.map((appointment) => {
-            if (appointment.state) {
+          {appointment?.map((appointment) => {
+            if (appointment?.state) {
               return (
                 <Flex key={appointment.nutritionistRut} flexDir={"column"}>
                   <Flex w="100%" align="center">
@@ -412,26 +423,35 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/me");
-    const user = {
-      name: response.data.name,
-      lastName: response.data.lastName,
-      email: response.data.email,
-    };
+    try {
+      const apiClient = setupAPIClient(ctx);
+      const response = await apiClient.get("/me");
+      const user = response?.data
 
-    const cookies = parseCookies(ctx);
-    const rut = cookies["rut"];
-    const responseAppointment = await api.get(`/appointments/${rut}`);
-    const appointment = responseAppointment.data;
+      const cookies = parseCookies(ctx);
+      const rut = cookies["rut"];
+      const responseAppointment = await apiClient.get(`/appointments/${rut}`);
+      const appointment = responseAppointment.data;
 
-    return {
-      props: {
-        user,
-        appointment,
-        rut,
-      },
-    };
+      return {
+        props: {
+          user,
+          appointment,
+          rut,
+        },
+      };
+    } catch(err) {
+      const cookies = parseCookies(ctx);
+      const rut = cookies["rut"];
+
+      return {
+        props: {
+          user: [],
+          appointment: [],
+          rut,
+        },
+      };
+    }
   },
   {
     roles: "client",

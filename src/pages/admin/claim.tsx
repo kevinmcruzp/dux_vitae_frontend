@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 import { useColors } from "../../hooks/useColors";
-import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function claim() {
@@ -26,8 +25,8 @@ export default function claim() {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/me");
+    // const apiClient = setupAPIClient(ctx);
+    // const response = await apiClient.get("/me");
 
     return {
       props: {},

@@ -9,7 +9,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr
 } from "@chakra-ui/react";
 import { NutritionistsTableContent } from "../../components/NutritionistsTableContent";
 import { useColors } from "../../hooks/useColors";
@@ -73,7 +73,7 @@ export default function nutritionist({
           </Thead>
 
           <Tbody color={colors.color}>
-            {listNutritionist.map(
+            {listNutritionist?.map(
               (nutritionists) =>
                 nutritionists?.certificate.state && (
                   <NutritionistsTableContent
@@ -103,17 +103,25 @@ export default function nutritionist({
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const response = await apiClient.get("/me");
 
-    const responseNutritionist = await api.get("/nutritionists");
-    const listNutritionist = responseNutritionist.data;
+      const responseNutritionist = await api.get("/nutritionists");
+      const listNutritionist = responseNutritionist.data;
 
-    return {
-      props: {
-        listNutritionist,
-      },
-    };
+      return {
+        props: {
+          listNutritionist,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          listNutritionist: [], // Leh: Devolvo como array vazio
+        },
+      };
+    }
   },
   {
     roles: "admin",

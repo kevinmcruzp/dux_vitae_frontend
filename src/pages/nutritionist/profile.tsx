@@ -2,7 +2,7 @@ import { Avatar, Flex, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { RiMailLine } from "react-icons/ri";
 import * as yup from "yup";
@@ -11,7 +11,6 @@ import { Input } from "../../components/Input";
 import { Select } from "../../components/Select";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 type NutritionistData = {
@@ -76,18 +75,18 @@ export default function profile({ nutritionistData }) {
 
   const { colors } = useColors();
   const nameNutritionist =
-    nutritionistData.name + " " + nutritionistData.lastName;
+    nutritionistData?.name + " " + nutritionistData?.lastName;
   const [dateCreatedClient, setDateCreatedClient] = useState("");
 
   useEffect(() => {
-    const date = new Date(nutritionistData.created_at);
+    const date = new Date(nutritionistData?.created_at);
     setDateCreatedClient(
       date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
     );
   }, []);
 
-  const onSubmit: SubmitHandler<UpdateData> = (data) => {
-    console.log(data);
+  // const onSubmit: SubmitHandler<UpdateData> = (data) => {
+  //   console.log(data);
     // api
     //   .post("/clients", data)
     //   .then((data) => {
@@ -96,7 +95,7 @@ export default function profile({ nutritionistData }) {
     //     }
     //   })
     //   .catch(() => {});
-  };
+  // };
 
   return (
     <Flex
@@ -119,7 +118,8 @@ export default function profile({ nutritionistData }) {
         padding={2}
         flexDir={"column"}
         flex="1"
-        onSubmit={handleSubmit(onSubmit)}
+        // onSubmit={handleSubmit(onSubmit)}
+        onSubmit={() => {}}
       >
         {/* Información general */}
         <Flex h={"3rem"} align={"end"}>
@@ -135,7 +135,7 @@ export default function profile({ nutritionistData }) {
               idName="name"
               label="Nombre"
               color={colors.color}
-              defaultValue={nutritionistData.name}
+              defaultValue={nutritionistData?.name}
               error={errors.name}
               {...register("name")}
             />
@@ -144,7 +144,7 @@ export default function profile({ nutritionistData }) {
               idName="lastName"
               label="Apellido"
               color={colors.color}
-              defaultValue={nutritionistData.lastName}
+              defaultValue={nutritionistData?.lastName}
               error={errors.lastName}
               {...register("lastName")}
             />
@@ -180,7 +180,7 @@ export default function profile({ nutritionistData }) {
               idName="email"
               label="Email"
               color={colors.color}
-              defaultValue={nutritionistData.email}
+              defaultValue={nutritionistData?.email}
               error={errors.email}
               {...register("email")}
             />
@@ -284,7 +284,7 @@ export default function profile({ nutritionistData }) {
 
           <Flex alignItems="center" justifyContent="center" gap="5px">
             <RiMailLine />
-            <Text fontSize="0.9rem">{nutritionistData.email}</Text>
+            <Text fontSize="0.9rem">{nutritionistData?.email}</Text>
           </Flex>
 
           <Text fontSize="0.7rem">Cuenta creada el {dateCreatedClient}</Text>
@@ -296,26 +296,28 @@ export default function profile({ nutritionistData }) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
+    try {
+      const apiClient = setupAPIClient(ctx);
 
-    const cookies = parseCookies(ctx);
-    const rutNutritionist = cookies["rut"];
+      const cookies = parseCookies(ctx);
+      const rutNutritionist = cookies["rut"];
 
-    const response = await api.get(`/nutritionists/${rutNutritionist}`);
+      const response = await apiClient.get(`/nutritionists/${rutNutritionist}`);
 
-    const nutritionistData: NutritionistData = {
-      rut: response.data.rut,
-      email: response.data.email,
-      name: response.data.name,
-      lastName: response.data.lastName,
-      created_at: response.data.created_at,
-    };
+      const nutritionistData = response?.data;
 
-    return {
-      props: {
-        nutritionistData,
-      },
-    };
+      return {
+        props: {
+          nutritionistData,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          nutritionistData: [], // Leh: Retorno vazio
+        },
+      };
+    }
   },
   {
     roles: "nutritionist",

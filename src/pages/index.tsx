@@ -2,7 +2,7 @@ import {
   Center,
   Flex,
   useBreakpointValue,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
@@ -13,9 +13,11 @@ import { Logo } from "../assets/Logo";
 import { Button } from "../components/Button";
 import { HomeInfo } from "../components/HomeInfo";
 import { Input } from "../components/Input";
+import { InputShowPassword } from "../components/InputShowPassword";
 import { ThemeSwitcher } from "../components/ThemeSwitcher";
 import { AuthContext } from "../context/AuthContext";
 import { useColors } from "../hooks/useColors";
+import { useToasts } from "../hooks/useToasts";
 import { withSRRGuest } from "../utils/withSSRGuest";
 
 type SignInData = {
@@ -41,6 +43,7 @@ export default function Home() {
     resolver: yupResolver(SignInSchema),
   });
 
+  const { toastError } = useToasts()
   const { colors } = useColors();
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
@@ -48,7 +51,11 @@ export default function Home() {
   const { signIn } = useContext(AuthContext);
 
   const onSubmit: SubmitHandler<SignInData> = async (data) => {
-    await signIn(data);
+    try {
+      await signIn(data);
+    } catch(err) {
+      toastError({ description: "Usuario con estos datos no registrado" })
+    }
   };
 
   return (
@@ -94,7 +101,7 @@ export default function Home() {
               error={errors.email}
               {...register("email")}
             />
-            <Input
+            <InputShowPassword
               type="password"
               idName="password"
               label="Password"

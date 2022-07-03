@@ -1,3 +1,4 @@
+import { Flex, useToast } from "@chakra-ui/react";
 import Router from "next/router";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import {
@@ -5,7 +6,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { api } from "../services/apiClient";
 
@@ -51,6 +52,11 @@ export function signOut() {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const toastError = useToast({
+		position: 'top',
+		status: 'error',
+		duration: 3000,
+	})
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
 
@@ -108,7 +114,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       roles === "admin" && Router.push("/admin/dashboard");
       roles === "client" && Router.push("/client/home");
     } catch (err) {
-      console.log(err);
+      toastError({
+        render: () => (
+          <Flex backgroundColor='#E01F1F' borderRadius='7px' color='white' py='10px' px='12px' fontSize={13} >
+            Usuario con estos datos no existe
+          </Flex>
+        )
+      })
     }
   }
 

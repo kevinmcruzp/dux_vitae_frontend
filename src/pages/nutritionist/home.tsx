@@ -4,12 +4,11 @@ import { Key } from "react";
 import {
   RiCheckboxBlankCircleFill,
   RiMailLine,
-  RiUserLine,
+  RiUserLine
 } from "react-icons/ri";
 import { GridTemplate } from "../../components/GridTemplate";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 type ClientData = {
@@ -84,7 +83,7 @@ export default function home({
         <GridTemplate title="Tus últimas solicitudes">
           {lastTwoAppointment?.length ? (
             <Flex flexDir="column" gap={3} flex="1">
-              {lastTwoAppointment.map((appointment) => (
+              {lastTwoAppointment?.map((appointment) => (
                 <Flex gap={2} key={appointment.idAppointment} flexDir="column">
                   <Text fontWeight={"bold"} fontSize="0.9rem">
                     Solicitud: {appointment.title}
@@ -134,7 +133,7 @@ export default function home({
         <GridTemplate title="Solicitudes aceptadas">
           {lastTwoAppointmentsAccepted?.length ? (
             <Flex flexDir="column" gap={3} flex="1">
-              {lastTwoAppointmentsAccepted.map((appointment) => (
+              {lastTwoAppointmentsAccepted?.map((appointment) => (
                 <Flex gap={2} key={appointment.idAppointment} flexDir="column">
                   <Text fontWeight={"bold"} fontSize="0.9rem">
                     Solicitud: {appointment.title}
@@ -176,7 +175,7 @@ export default function home({
         <GridTemplate title="Solicitudes pendientes">
           {lastTwoAppointmentsOnHold?.length ? (
             <Flex flexDir="column" gap={3} flex="1">
-              {lastTwoAppointmentsOnHold.map((appointment) => (
+              {lastTwoAppointmentsOnHold?.map((appointment) => (
                 <Flex
                   key={appointment.idAppointment}
                   flex="1"
@@ -234,47 +233,57 @@ export default function home({
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    // const response = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const response = await apiClient.get("/me");
 
-    const cookies = parseCookies(ctx);
-    const nutritionistRut = cookies["rut"];
-    const responseAppointment = await api.get(
-      `/appointments/${nutritionistRut}`
-    );
+      const cookies = parseCookies(ctx);
+      const nutritionistRut = cookies["rut"];
+      const responseAppointment = await apiClient.get(
+        `/appointments/${nutritionistRut}`
+      );
 
-    const lastTwoAppointment = responseAppointment.data.slice(
-      responseAppointment.data.length - 2
-    );
+      const lastTwoAppointment = responseAppointment.data.slice(
+        responseAppointment.data.length - 2
+      );
 
-    //Filtrar según el estado, si es true es aceptado, si es false es pendiente
-    const appointmentAccepted = responseAppointment.data.filter(
-      (appointments) => {
-        return appointments.state === true;
-      }
-    );
+      //Filtrar según el estado, si es true es aceptado, si es false es pendiente
+      const appointmentAccepted = responseAppointment.data.filter(
+        (appointments) => {
+          return appointments.state === true;
+        }
+      );
 
-    const appointmentsOnHold = responseAppointment.data.filter(
-      (appointments) => {
-        return appointments.state === false;
-      }
-    );
+      const appointmentsOnHold = responseAppointment.data.filter(
+        (appointments) => {
+          return appointments.state === false;
+        }
+      );
 
-    const lastTwoAppointmentsAccepted = appointmentAccepted.slice(
-      appointmentAccepted.length - 2
-    );
+      const lastTwoAppointmentsAccepted = appointmentAccepted.slice(
+        appointmentAccepted.length - 2
+      );
 
-    const lastTwoAppointmentsOnHold = appointmentsOnHold.slice(
-      appointmentAccepted.length - 2
-    );
+      const lastTwoAppointmentsOnHold = appointmentsOnHold.slice(
+        appointmentAccepted.length - 2
+      );
 
-    return {
-      props: {
-        lastTwoAppointment,
-        lastTwoAppointmentsAccepted,
-        lastTwoAppointmentsOnHold,
-      },
-    };
+      return {
+        props: {
+          lastTwoAppointment,
+          lastTwoAppointmentsAccepted,
+          lastTwoAppointmentsOnHold,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          lastTwoAppointment: [], // Leh: Retorno vazio
+          lastTwoAppointmentsAccepted: [], // Leh: Retorno vazio
+          lastTwoAppointmentsOnHold: [], // Leh: Retorno vazio
+        },
+      };
+    }
   },
   {
     roles: "nutritionist",

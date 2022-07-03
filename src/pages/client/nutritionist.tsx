@@ -9,7 +9,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr
 } from "@chakra-ui/react";
 import Router from "next/router";
 import { parseCookies } from "nookies";
@@ -17,7 +17,6 @@ import { useEffect, useState } from "react";
 import { TableContentNutritionist } from "../../components/TableContentNutritionist";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export function onReloadPage() {
@@ -29,11 +28,11 @@ export default function client({ nutritionists, appointment }) {
   const [rut, setRut] = useState<string[]>([]);
 
   useEffect(() => {
-    appointment.map((appointment) => {
+    appointment?.map((appointment) => {
       setRut((rut) => [...rut, appointment.nutritionistRut]);
     });
   }, []);
-  console.log(rut);
+  // console.log(rut);
   return (
     <Flex
       flex="1"
@@ -70,9 +69,9 @@ export default function client({ nutritionists, appointment }) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {nutritionists.map(
+            {nutritionists?.map(
               (nutritionists) =>
-                nutritionists?.certificate.state && (
+                nutritionists?.certificate?.state && (
                   <TableContentNutritionist
                     key={nutritionists.rut}
                     request={rut.includes(nutritionists.rut)}
@@ -100,25 +99,34 @@ export default function client({ nutritionists, appointment }) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const client = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const client = await apiClient.get("/me");
 
-    const cookies = parseCookies(ctx);
-    const rut = cookies["rut"];
-    console.log(rut);
-    const responseAppointment = await api.get(`/appointments/${rut}`);
+      const cookies = parseCookies(ctx);
+      const rut = cookies["rut"];
+      // console.log(rut);
+      const responseAppointment = await apiClient.get(`/appointments/${rut}`);
 
-    const appointment = responseAppointment.data;
+      const appointment = responseAppointment?.data;
 
-    const responseNutritionist = await api.get("/nutritionists");
-    const nutritionists = responseNutritionist.data;
+      const responseNutritionist = await apiClient.get("/nutritionists");
+      const nutritionists = responseNutritionist?.data;
 
-    return {
-      props: {
-        nutritionists,
-        appointment,
-      },
-    };
+      return {
+        props: {
+          nutritionists,
+          appointment,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          nutritionists: [], // Leh: Retorno vazio
+          appointment: [], // Leh: Retorno vazio
+        },
+      };
+    }
   },
   {
     roles: "client",

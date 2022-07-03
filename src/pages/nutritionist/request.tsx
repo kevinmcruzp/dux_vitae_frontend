@@ -9,29 +9,46 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr,
+  Tr
 } from "@chakra-ui/react";
 import Router from "next/router";
 import { parseCookies } from "nookies";
 import { TableContentAppointment } from "../../components/TableContentAppointment";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export async function rejectRequest(id: string) {
+  const { toastSuccess, toastError } = useToasts();
+
   //Rota por se rechaza la solicitud
-  const response = await api.delete(`/appointments/${id}`);
-  if (typeof window !== undefined) {
-    Router.reload();
+  try {
+    const response = await api.delete(`/appointments/${id}`);
+    if (typeof window !== undefined) {
+      toastSuccess({ description: "Solicitud rechazada"});
+
+      Router.reload();
+    }
+  } catch(err) {
+    toastError({ description: "Error al rechazar solicitud"});
   }
 }
 
 export async function acceptRequest(id: string) {
-  //Rota por se aceita a solicitud
-  const response = await api.put(`/appointments/${id}`);
-  if (typeof window !== undefined) {
-    Router.reload();
+  const { toastSuccess, toastError } = useToasts();
+
+  try {
+    //Rota por se aceita a solicitud
+    const response = await api.put(`/appointments/${id}`);
+    if (typeof window !== undefined) {
+      toastSuccess({ description: "Solicitud aceptada"});
+
+      Router.reload();
+    }
+  } catch(err) {
+    toastError({ description: "Error al aceptar solicitud" });
   }
 }
 
@@ -74,7 +91,7 @@ export default function Request({ appointment }) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {appointment.map((appointment) => (
+            {appointment?.map((appointment) => (
               <TableContentAppointment
                 key={appointment.idAppointment}
                 id={appointment.idAppointment}
@@ -102,20 +119,28 @@ export default function Request({ appointment }) {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    const apiClient = setupAPIClient(ctx);
-    const client = await apiClient.get("/me");
+    try {
+      const apiClient = setupAPIClient(ctx);
+      // const client = await apiClient.get("/me");
 
-    const cookies = parseCookies(ctx);
-    const rut = cookies["rut"];
+      const cookies = parseCookies(ctx);
+      const rut = cookies["rut"];
 
-    const responseAppointment = await api.get(`/appointments/${rut}`);
+      const responseAppointment = await apiClient.get(`/appointments/${rut}`);
 
-    const appointment = responseAppointment.data;
-    return {
-      props: {
-        appointment,
-      },
-    };
+      const appointment = responseAppointment.data;
+      return {
+        props: {
+          appointment,
+        },
+      };
+    } catch(err) {
+      return {
+        props: {
+          appointment: [], // Leh: Vai como vazio
+        },
+      };
+    }
   },
   {
     roles: "nutritionist",

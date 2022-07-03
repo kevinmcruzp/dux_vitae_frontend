@@ -3,7 +3,7 @@ import {
   Flex,
   IconButton,
   useBreakpointValue,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router from "next/router";
@@ -16,6 +16,7 @@ import { HomeInfo } from "../../components/HomeInfo";
 import { Input } from "../../components/Input";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { api } from "../../services/apiClient";
 
 type SignInData = {
@@ -84,19 +85,25 @@ export default function register() {
     resolver: yupResolver(RegisterSchema),
   });
 
+  const { toastSuccess, toastError } = useToasts()
   const { colors } = useColors();
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
   const onSubmit: SubmitHandler<SignInData> = (data) => {
-    api
+    try {
+      api
       .post("/clients", data)
       .then((data) => {
         if (data.status === 200) {
+          toastSuccess({ description: "Registro exitoso, por favor inicia sesión"})
           Router.push("/");
         }
       })
-      .catch(() => {});
+    } catch(err) {
+      toastError({ description: "Error al registrar"})
+    }
+
   };
 
   return (
