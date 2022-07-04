@@ -3,7 +3,7 @@ import {
   Flex,
   IconButton,
   useBreakpointValue,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router from "next/router";
@@ -85,25 +85,24 @@ export default function register() {
     resolver: yupResolver(RegisterSchema),
   });
 
-  const { toastSuccess, toastError } = useToasts()
+  const { toastSuccess, toastError } = useToasts();
   const { colors } = useColors();
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
   const onSubmit: SubmitHandler<SignInData> = (data) => {
     try {
-      api
-      .post("/clients", data)
-      .then((data) => {
+      api.post("/clients", data).then((data) => {
         if (data.status === 200) {
-          toastSuccess({ description: "Registro exitoso, por favor inicia sesión"})
+          toastSuccess({
+            description: "Registro exitoso, por favor inicia sesión",
+          });
           Router.push("/");
         }
-      })
-    } catch(err) {
-      toastError({ description: "Error al registrar"})
+      });
+    } catch (err) {
+      toastError({ description: "Error al registrar" });
     }
-
   };
 
   return (
@@ -115,7 +114,7 @@ export default function register() {
         p={[2, 4, 6]}
         bg={colors.bgHover}
         flexDir="column"
-        overflow="auto"
+        overflowY="auto"
       >
         <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}
@@ -144,6 +143,7 @@ export default function register() {
             justify="center"
             gap={4}
             onSubmit={handleSubmit(onSubmit)}
+            overflowY="auto"
           >
             <Input
               type="text"

@@ -2,6 +2,7 @@ import {
   Center,
   Flex,
   IconButton,
+  Text,
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -10,6 +11,7 @@ import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { MdOutlineLogin } from "react-icons/md";
 import * as yup from "yup";
+import { ArchivePDF } from "../../assets/ArchivePDF";
 import { Logo } from "../../assets/Logo";
 import { Button } from "../../components/Button";
 import { HomeInfo } from "../../components/HomeInfo";
@@ -68,14 +70,13 @@ const RegisterSchema = yup.object().shape({
     .string()
     .required("La contraseña es requerida")
     .matches(
-      // /^(?=.[0-9])(?=.[a-z])(?=.[A-Z])(?=.[@#$%^&+=.-])([a-zA-Z0-9@#$%^&+=_-]){8,}$/g,
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&_*-]).{8,}$/g,
       "La contraseña debe tener al menos 8 caracteres, una mayuscula, una minuscula, un numero y un caracter especial"
     ),
   passwordConfirmation: yup
     .string()
     .oneOf([null, yup.ref("password")], "Las contraseñas no coinciden"),
-  file: yup.mixed().required("El archivo título en formato pdf es requerido"),
+  file: yup.mixed().required("El archivo PDF es requerido"),
 });
 
 export default function register() {
@@ -132,7 +133,7 @@ export default function register() {
         p={[2, 4, 6]}
         bg={colors.bgHover}
         flexDir="column"
-        overflow="auto"
+        overflowY="auto"
       >
         <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}
@@ -161,6 +162,7 @@ export default function register() {
             justify="center"
             gap={4}
             onSubmit={handleSubmit(onSubmit)}
+            overflowY="auto"
           >
             <Input
               type="text"
@@ -214,13 +216,31 @@ export default function register() {
               {...register("passwordConfirmation")}
             />
 
+            <Text
+              as="label"
+              htmlFor="filePDF"
+              display="flex"
+              alignItems={"center"}
+              justifyContent="center"
+              h={47}
+              w="auto"
+              cursor={"pointer"}
+              _hover={{ filter: "brightness(90%)" }}
+              border="1px solid"
+              borderColor="gray.500"
+              borderRadius="5px"
+              p={3}
+            >
+              Archivo del título: {<ArchivePDF />}
+            </Text>
+
             <Input
+              display={"none"}
               type="file"
+              id="filePDF"
+              idName="file"
               accept=".pdf"
               multiple={false}
-              idName="file"
-              label="Título"
-              color={colors.color}
               error={errors.file}
               {...register("file")}
             />
