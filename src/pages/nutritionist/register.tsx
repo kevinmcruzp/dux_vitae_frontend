@@ -9,7 +9,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { MdOutlineLogin } from "react-icons/md";
+import { RiArrowLeftCircleLine } from "react-icons/ri";
 import * as yup from "yup";
 import { ArchivePDF } from "../../assets/ArchivePDF";
 import { Logo } from "../../assets/Logo";
@@ -140,7 +140,7 @@ export default function register() {
 
           <Flex>
             <IconButton
-              icon={<MdOutlineLogin size="22px" />}
+              icon={<RiArrowLeftCircleLine size="22px" />}
               variant="backHome"
               aria-label="Back home"
               color={colors.color}
