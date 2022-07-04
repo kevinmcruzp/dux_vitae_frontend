@@ -3,6 +3,7 @@ import Router from "next/router";
 import { parseCookies } from "nookies";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
+import { RiFile3Line } from "react-icons/ri";
 import { io, Socket } from "socket.io-client";
 import { ArchivePDF } from "../../assets/ArchivePDF";
 import { ConnectImg } from "../../assets/ConnectImg";
@@ -50,7 +51,7 @@ type MsgProps = {
 };
 
 export default function message({ user, appointment, rut }: ServerSideProps) {
-  const { toastSuccess, toastError } = useToasts()
+  const { toastSuccess, toastError } = useToasts();
   const { colors } = useColors();
   const [connected, setConnected] = useState<boolean>(false);
   const [chat, setChat] = useState<MsgProps[]>([]);
@@ -113,7 +114,6 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
     formData.append("file", files[0]);
 
     try {
-      // Leh: Isto está uma bagunça, nao coloquei o toastSuccess porque nao sei onde colocar kkkk
       api.post("/files", formData).then(async (res) => {
         const createFileResponse = await api.post("file", {
           filename: res.data.filename,
@@ -137,8 +137,8 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
           setMessage("");
         }
       });
-    } catch(err) {
-      toastError({ description: "Error al enviar el archivo"})
+    } catch (err) {
+      toastError({ description: "Error al enviar el archivo" });
     }
   };
 
@@ -148,7 +148,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
 
     setChat([]);
 
-    //Testear si es problema está aqui
+    //Testear si el problema está aqui
     try {
       const response = await api.get(`/chat/${room}`);
 
@@ -157,8 +157,8 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
       } else {
         setChat(response.data?.Message);
       }
-    } catch(err) {
-      toastError({ description: "Error al abrir el chat"})
+    } catch (err) {
+      toastError({ description: "Error al abrir el chat" });
     }
   }
 
@@ -266,8 +266,7 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
           >
             {chat?.length ? (
               <Flex flex="1" flexDir="column">
-                {console.log(chat)}
-                {chat.map((chat, index) => (
+                {chat?.map((chat, index) => (
                   <Flex
                     key={index}
                     marginBottom={3}
@@ -364,12 +363,28 @@ export default function message({ user, appointment, rut }: ServerSideProps) {
           {/* Footer del chat */}
           {connected && (
             <Flex gap={3}>
+              <Text
+                as="label"
+                htmlFor="filePDF"
+                display="flex"
+                alignItems={"center"}
+                h="100%"
+                w="auto"
+                cursor={"pointer"}
+                _hover={{ filter: "brightness(90%)" }}
+              >
+                <RiFile3Line color={colors.divider} size="2rem" />
+              </Text>
               <Input
+                display={"none"}
+                multiple={false}
                 ref={fileRef}
                 type="file"
                 name="file"
                 w="auto"
                 onChange={sendFileMessage}
+                accept=".pdf"
+                id="filePDF"
               />
 
               <Input
@@ -426,7 +441,7 @@ export const getServerSideProps = withSSRAuth(
     try {
       const apiClient = setupAPIClient(ctx);
       const response = await apiClient.get("/me");
-      const user = response?.data
+      const user = response?.data;
 
       const cookies = parseCookies(ctx);
       const rut = cookies["rut"];
@@ -440,7 +455,7 @@ export const getServerSideProps = withSSRAuth(
           rut,
         },
       };
-    } catch(err) {
+    } catch (err) {
       const cookies = parseCookies(ctx);
       const rut = cookies["rut"];
 
