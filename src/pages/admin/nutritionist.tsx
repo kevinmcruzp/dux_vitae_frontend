@@ -9,12 +9,11 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import { NutritionistsTableContent } from "../../components/NutritionistsTableContent";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 3;
 
@@ -107,7 +106,7 @@ export const getServerSideProps = withSSRAuth(
       const apiClient = setupAPIClient(ctx);
       // const response = await apiClient.get("/me");
 
-      const responseNutritionist = await api.get("/nutritionists");
+      const responseNutritionist = await apiClient.get("/nutritionists");
       const listNutritionist = responseNutritionist.data;
 
       return {
@@ -115,10 +114,10 @@ export const getServerSideProps = withSSRAuth(
           listNutritionist,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
-          listNutritionist: [], // Leh: Devolvo como array vazio
+          listNutritionist: [],
         },
       };
     }

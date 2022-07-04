@@ -6,7 +6,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useState
+  useState,
 } from "react";
 import { api } from "../services/apiClient";
 
@@ -53,10 +53,10 @@ export function signOut() {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const toastError = useToast({
-		position: 'top',
-		status: 'error',
-		duration: 3000,
-	})
+    position: "top",
+    status: "error",
+    duration: 3000,
+  });
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
 
@@ -116,11 +116,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (err) {
       toastError({
         render: () => (
-          <Flex backgroundColor='#E01F1F' borderRadius='7px' color='white' py='10px' px='12px' fontSize={13} >
-            Usuario con estos datos no existe
+          <Flex
+            backgroundColor="#E01F1F"
+            borderRadius="7px"
+            color="white"
+            py="10px"
+            px="12px"
+            fontSize={13}
+          >
+            Usuario con estos datos no existe o no está válido
           </Flex>
-        )
-      })
+        ),
+      });
     }
   }
 

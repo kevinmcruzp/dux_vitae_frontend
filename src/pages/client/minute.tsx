@@ -20,25 +20,28 @@ type FileListProps = {
   ];
 };
 
-function downloadFile(originalname: string, file: string) {
-  const { toastSuccess, toastError } = useToasts()
-
-  try {
-    api({
-      url: `/file/${file}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((res) => {
-      toastSuccess({ description: "Archivo descargado"})
-      fileDownload(res.data, originalname);
-    });
-  } catch(err) {
-    toastError({ description: "Error al descargar archivo"})
-  }
-}
-
 export default function minute({ fileList }: FileListProps) {
+  const { toastSuccess, toastError } = useToasts();
   const { colors } = useColors();
+
+  function downloadFile(originalname: string, file: string) {
+    try {
+      api({
+        url: `/file/${file}`,
+        method: "GET",
+        responseType: "blob",
+      })
+        .then((res) => {
+          fileDownload(res.data, originalname);
+          toastSuccess({ description: "Archivo descargado" });
+        })
+        .catch((err) => {
+          toastError({ description: "Error al descargar el archivo" });
+        });
+    } catch (err) {
+      toastError({ description: "Error al descargar archivo" });
+    }
+  }
 
   function convertDate(date: Date) {
     return new Date(date).toLocaleString();
@@ -73,14 +76,28 @@ export default function minute({ fileList }: FileListProps) {
           h="31rem"
           bg={colors.chat}
           p={5}
-          gap={5}
           flexDir="column"
           borderRadius={5}
+          overflowY={"auto"}
+          __css={{
+            "&::-webkit-scrollbar": {
+              w: "2",
+            },
+            "&::-webkit-scrollbar-track": {
+              w: "6",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              borderRadius: "10",
+              bg: `${colors.divider}`,
+            },
+          }}
         >
           {/*tabla de certificado*/}
           {fileList?.map((file) => (
             <span key={file.idFile}>
               <Flex
+                marginTop={3}
+                marginBottom={3}
                 align={"center"}
                 justifyContent="space-between"
                 _hover={{ cursor: "pointer" }}
@@ -122,10 +139,10 @@ export const getServerSideProps = withSSRAuth(
       return {
         props: { fileList },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
-          fileList: [] // Leh: Retorno vazio
+          fileList: [], // Leh: Retorno vazio
         },
       };
     }

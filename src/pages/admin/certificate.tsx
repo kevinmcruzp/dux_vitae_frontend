@@ -9,7 +9,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import fileDownload from "js-file-download";
 import Router from "next/router";
@@ -42,41 +42,38 @@ type ListCertificates = {
   ];
 };
 
-export function AcceptNutritionistCertificate(idCertificate: string) {
-  const { toastSuccess, toastError } = useToasts()
-
-  try {
-    api.put(`/certificate/${idCertificate}`).then((res) => {
-      if (res.status === 200) {
-        toastSuccess({ description: "Certificado aceptado"})
-
-        Router.reload();
-      }
-    });
-  } catch (err) {
-    toastError({ description: "Error al aceptar certificado"})
-  }
-}
-
-export function downloadCertificate(fileName: string, file: string) {
-  const { toastSuccess, toastError } = useToasts()
-
-  try {
-    api({
-      url: `/certificate/${file}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((res) => {
-      fileDownload(res.data, fileName);
-      toastSuccess({ description: "Certificado descargado"})
-    });
-  } catch(err) {
-    toastError({ description: "Error al descargar certificado"})
-  }
-}
-
 export default function certificate({ listCertificates }: ListCertificates) {
   const { colors } = useColors();
+  const { toastSuccess, toastError } = useToasts();
+
+  function AcceptNutritionistCertificate(idCertificate: string) {
+    try {
+      api.put(`/certificate/${idCertificate}`).then((res) => {
+        if (res.status === 200) {
+          toastSuccess({ description: "Certificado aceptado" });
+
+          Router.reload();
+        }
+      });
+    } catch (err) {
+      toastError({ description: "Error al aceptar certificado" });
+    }
+  }
+
+  function downloadCertificate(fileName: string, file: string) {
+    try {
+      api({
+        url: `/certificate/${file}`,
+        method: "GET",
+        responseType: "blob",
+      }).then((res) => {
+        fileDownload(res.data, fileName);
+        toastSuccess({ description: "Certificado descargado" });
+      });
+    } catch (err) {
+      toastError({ description: "Error al descargar certificado" });
+    }
+  }
 
   return (
     <Flex
@@ -125,6 +122,10 @@ export default function certificate({ listCertificates }: ListCertificates) {
                     created_at={certificate.created_at}
                     adminRut={certificate.adminRut}
                     nutritionist={certificate.nutritionist}
+                    AcceptNutritionistCertificate={
+                      AcceptNutritionistCertificate
+                    }
+                    downloadCertificate={downloadCertificate}
                   />
                 )
             )}
@@ -158,7 +159,7 @@ export const getServerSideProps = withSSRAuth(
           listCertificates,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
           listCertificates: [], // Leh: Devolvo como array vazio

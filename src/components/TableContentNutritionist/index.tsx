@@ -19,8 +19,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useColors } from "../../hooks/useColors";
-import { onReloadPage } from "../../pages/client/nutritionist";
-import { api } from "../../services/apiClient";
+import { useToasts } from "../../hooks/useToasts";
 import { Button } from "../Button";
 import { Input } from "../Input";
 
@@ -31,6 +30,7 @@ type TableContentProps = {
   state?: string;
   request?: boolean;
   email?: string;
+  onReloadPage: (data) => void;
 };
 
 type AppointmentData = {
@@ -50,6 +50,7 @@ export function TableContentNutritionist({
   state,
   request = false,
   email,
+  onReloadPage,
 }: TableContentProps) {
   const {
     register,
@@ -64,6 +65,7 @@ export function TableContentNutritionist({
   const [buttonComponent, setButtonComponent] = useState<string>("profile");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [run, setRun] = useState("");
+  const { toastSuccess, toastError } = useToasts();
 
   useEffect(() => {
     const cookies = parseCookies(undefined);
@@ -81,10 +83,7 @@ export function TableContentNutritionist({
       clientRut: run,
     };
 
-    api.post("/appointments", data);
-
-    onReloadPage();
-    onClose();
+    onReloadPage(data);
   };
 
   return (

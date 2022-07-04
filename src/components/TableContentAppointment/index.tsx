@@ -15,9 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { useColors } from "../../hooks/useColors";
-import { acceptRequest, rejectRequest } from "../../pages/nutritionist/request";
 import { Button } from "../Button";
 
 type ClientAppointmentProps = {
@@ -34,10 +32,8 @@ type TableContentProps = {
   description?: string;
   state?: Boolean;
   client?: ClientAppointmentProps;
-};
-
-type AppointmentData = {
-  req: Boolean;
+  rejectRequest?: (id: string) => void;
+  acceptRequest?: (id: string) => void;
 };
 
 export function TableContentAppointment({
@@ -46,13 +42,9 @@ export function TableContentAppointment({
   description,
   state,
   client,
+  rejectRequest,
+  acceptRequest,
 }: TableContentProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<AppointmentData>();
-
   const { colors } = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [run, setRun] = useState("");

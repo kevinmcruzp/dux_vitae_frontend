@@ -9,7 +9,7 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import { parseCookies } from "nookies";
@@ -20,40 +20,41 @@ import { setupAPIClient } from "../../services/api";
 import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-export async function rejectRequest(id: string) {
-  const { toastSuccess, toastError } = useToasts();
-
-  //Rota por se rechaza la solicitud
-  try {
-    const response = await api.delete(`/appointments/${id}`);
-    if (typeof window !== undefined) {
-      toastSuccess({ description: "Solicitud rechazada"});
-
-      Router.reload();
-    }
-  } catch(err) {
-    toastError({ description: "Error al rechazar solicitud"});
-  }
-}
-
-export async function acceptRequest(id: string) {
-  const { toastSuccess, toastError } = useToasts();
-
-  try {
-    //Rota por se aceita a solicitud
-    const response = await api.put(`/appointments/${id}`);
-    if (typeof window !== undefined) {
-      toastSuccess({ description: "Solicitud aceptada"});
-
-      Router.reload();
-    }
-  } catch(err) {
-    toastError({ description: "Error al aceptar solicitud" });
-  }
-}
-
 export default function Request({ appointment }) {
   const { colors } = useColors();
+  const { toastSuccess, toastError } = useToasts();
+
+  async function rejectRequest(id: string) {
+    //Ruta por si rechaza la solicitud
+    try {
+      const response = await api.delete(`/appointments/${id}`);
+      if (typeof window !== undefined) {
+        toastSuccess({ description: "Solicitud rechazada" });
+
+        setTimeout(() => {
+          Router.reload();
+        }, 3000);
+      }
+    } catch (err) {
+      toastError({ description: "Error al rechazar solicitud" });
+    }
+  }
+
+  async function acceptRequest(id: string) {
+    try {
+      //Ruta por si acepta la solicitud
+      const response = await api.put(`/appointments/${id}`);
+      if (typeof window !== undefined) {
+        toastSuccess({ description: "Solicitud aceptada" });
+
+        setTimeout(() => {
+          Router.reload();
+        }, 3000);
+      }
+    } catch (err) {
+      toastError({ description: "Error al aceptar solicitud" });
+    }
+  }
 
   return (
     <Flex
@@ -99,6 +100,8 @@ export default function Request({ appointment }) {
                 description={appointment.description}
                 state={appointment.state}
                 client={appointment.client}
+                rejectRequest={rejectRequest}
+                acceptRequest={acceptRequest}
               />
             ))}
           </Tbody>
@@ -134,7 +137,7 @@ export const getServerSideProps = withSSRAuth(
           appointment,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
           appointment: [], // Leh: Vai como vazio

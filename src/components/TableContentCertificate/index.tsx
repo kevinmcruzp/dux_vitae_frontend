@@ -18,10 +18,6 @@ import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import { ArchivePDF } from "../../assets/ArchivePDF";
 import { useColors } from "../../hooks/useColors";
-import {
-  AcceptNutritionistCertificate,
-  downloadCertificate,
-} from "../../pages/admin/certificate";
 import { Button } from "../Button";
 
 type NutritionistProps = {
@@ -39,11 +35,8 @@ type TableContentProps = {
   created_at: Date;
   adminRut: string;
   nutritionist: NutritionistProps;
-};
-
-type AppointmentData = {
-  title: string;
-  description: string;
+  AcceptNutritionistCertificate: (idCertificate: string) => void;
+  downloadCertificate: (fileName: string, file: string) => void;
 };
 
 export function TableContentCertificate({
@@ -53,6 +46,8 @@ export function TableContentCertificate({
   created_at,
   adminRut,
   nutritionist,
+  AcceptNutritionistCertificate,
+  downloadCertificate,
 }: TableContentProps) {
   const { colors } = useColors();
 
