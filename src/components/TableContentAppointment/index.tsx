@@ -75,7 +75,7 @@ export function TableContentAppointment({
             justifyContent={"flex-end"}
           >
             <Button
-              bg={colors.primary}
+              bg={"#484093"}
               name="Verificar solicitud"
               type="button"
               onClick={() => {
@@ -88,7 +88,7 @@ export function TableContentAppointment({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+        <ModalContent bg={colors.bg} color={colors.color}>
           <ModalHeader>
             <Flex align={"center"} gap={3}>
               {/* <Avatar name={name + " " + lastName} /> */}
@@ -97,19 +97,13 @@ export function TableContentAppointment({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody gap={2}>
-            <Flex
-              borderRadius="5"
-              bg={"#85000F"}
-              flexDir={"column"}
-              flex="1"
-              gap={3}
-            >
+            <Flex borderRadius="5" flexDir={"column"} flex="1" gap={3}>
               <Text fontSize="1.1rem" fontWeight={"bold"}>
                 Datos de la solicitud
               </Text>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -128,7 +122,6 @@ export function TableContentAppointment({
             <Flex
               borderRadius={"5"}
               marginTop={4}
-              bg={"#85000F"}
               flexDir={"column"}
               flex="1"
               gap={3}
@@ -137,7 +130,7 @@ export function TableContentAppointment({
                 Datos del cliente:
               </Text>
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -146,11 +139,11 @@ export function TableContentAppointment({
                 <Text fontSize={"1rem"} fontWeight={"bold"}>
                   Rut:
                 </Text>
-                <Text paddingLeft={2}>{client.rut}</Text>
+                <Text paddingLeft={1}>{client.rut}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -159,13 +152,13 @@ export function TableContentAppointment({
                 <Text fontSize={"1rem"} fontWeight={"bold"}>
                   Nombre:
                 </Text>
-                <Text paddingLeft={2}>
+                <Text paddingLeft={1}>
                   {client.name + " " + client.lastName}
                 </Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -174,11 +167,11 @@ export function TableContentAppointment({
                 <Text fontSize={"1rem"} fontWeight={"bold"}>
                   Email:
                 </Text>
-                <Text paddingLeft={2}>{client.email}</Text>
+                <Text paddingLeft={1}>{client.email}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -187,7 +180,7 @@ export function TableContentAppointment({
                 <Text fontSize={"1rem"} fontWeight={"bold"}>
                   Descripción
                 </Text>
-                <Text paddingLeft={2}>Nada.</Text>
+                <Text paddingLeft={1}>Nada.</Text>
               </Flex>
             </Flex>
           </ModalBody>
@@ -203,8 +196,7 @@ export function TableContentAppointment({
             />
             <Button
               name="Aceptar"
-              borderColor={"#a92a39"}
-              bg={colors.primary}
+              bg={colors.secondary}
               onClick={() => {
                 acceptRequest(id);
               }}

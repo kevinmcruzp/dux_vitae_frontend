@@ -85,15 +85,15 @@ export default function profile({ clientData }) {
   }, []);
 
   // const onSubmit: SubmitHandler<UpdateData> = (data) => {
-    // console.log(data);
-    // api
-    //   .post("/clients", data)
-    //   .then((data) => {
-    //     if (data.status === 200) {
-    //       // Router.push("/");
-    //     }
-    //   })
-    //   .catch(() => {});
+  // console.log(data);
+  // api
+  //   .post("/clients", data)
+  //   .then((data) => {
+  //     if (data.status === 200) {
+  //       // Router.push("/");
+  //     }
+  //   })
+  //   .catch(() => {});
   // };
 
   return (
@@ -133,7 +133,7 @@ export default function profile({ clientData }) {
               type={"text"}
               idName="name"
               label="Nombre"
-              color={colors.color}
+              bg={colors.bgHover}
               defaultValue={clientData?.name}
               error={errors.name}
               {...register("name")}
@@ -142,7 +142,7 @@ export default function profile({ clientData }) {
               type={"text"}
               idName="lastName"
               label="Apellido"
-              color={colors.color}
+              bg={colors.bgHover}
               defaultValue={clientData?.lastName}
               error={errors.lastName}
               {...register("lastName")}
@@ -154,7 +154,7 @@ export default function profile({ clientData }) {
               type={"date"}
               idName="birthday"
               label="Fecha de nacimiento"
-              color={colors.color}
+              bg={colors.bgHover}
               error={errors.birthday}
               {...register("birthday")}
             />
@@ -162,8 +162,8 @@ export default function profile({ clientData }) {
             <Select
               idName="gender"
               label="Género"
+              bg={colors.bgHover}
               placeholder="Seleccione género"
-              color={colors.color}
               error={errors.gender}
               {...register("gender")}
             >
@@ -178,7 +178,7 @@ export default function profile({ clientData }) {
               type={"email"}
               idName="email"
               label="Email"
-              color={colors.color}
+              bg={colors.bgHover}
               defaultValue={clientData?.email}
               error={errors.email}
               {...register("email")}
@@ -187,7 +187,7 @@ export default function profile({ clientData }) {
               type={"text"}
               idName="phone"
               label="Teléfono"
-              color={colors.color}
+              bg={colors.bgHover}
               error={errors.phone}
               {...register("phone")}
             />
@@ -207,7 +207,7 @@ export default function profile({ clientData }) {
               type={"text"}
               idName="address"
               label="Dirección"
-              color={colors.color}
+              bg={colors.bgHover}
               error={errors.address}
               {...register("address")}
             />
@@ -215,6 +215,7 @@ export default function profile({ clientData }) {
               type={"text"}
               idName="number"
               label="Número"
+              bg={colors.bgHover}
               color={colors.color}
               error={errors.number}
               {...register("number")}
@@ -225,15 +226,15 @@ export default function profile({ clientData }) {
             <Input
               idName="region"
               label="Región"
-              color={colors.color}
               defaultValue="Coquimbo"
+              bg={colors.bgHover}
               isDisabled={true}
             />
             <Select
               idName="city"
               label="Ciudad"
               placeholder="Seleccione género"
-              color={colors.color}
+              bg={colors.bgHover}
               error={errors.city}
               {...register("city")}
             >
@@ -303,14 +304,14 @@ export const getServerSideProps = withSSRAuth(
 
       const response = await apiClient.get(`/clients/${rutClient}`);
 
-      const clientData = response.data
+      const clientData = response.data;
 
       return {
         props: {
           clientData,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
           clientData: [], // Leh: Devolvendo vazio

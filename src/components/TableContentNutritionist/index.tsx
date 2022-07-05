@@ -93,12 +93,7 @@ export function TableContentNutritionist({
         <Td>{name} </Td>
         <Td>{lastName}</Td>
 
-        <Td
-          display="flex"
-          alignItems={"center"}
-          gap="1rem"
-          justifyContent={"flex-end"}
-        >
+        <Td>
           <Button
             bg={colors.tertiary}
             name="Perfil"
@@ -107,8 +102,10 @@ export function TableContentNutritionist({
               setButtonComponent("profile"), onOpen();
             }}
           />
+        </Td>
+        <Td>
           <Button
-            bg={request ? colors.secondary : colors.tertiary}
+            bg={request ? colors.secondary : "#484093"}
             name={request ? "Solicitado" : "Solicitar"}
             disabled={request}
             type="button"
@@ -122,7 +119,7 @@ export function TableContentNutritionist({
       {buttonComponent === "profile" ? (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+          <ModalContent bg={colors.bg} color={colors.color}>
             <ModalHeader>
               <Flex align={"center"} gap={3}>
                 <Avatar name={name + " " + lastName} />
@@ -133,7 +130,7 @@ export function TableContentNutritionist({
             <ModalBody gap={2}>
               <Flex flexDir={"column"} flex="1" gap={3}>
                 <Flex
-                  bg={"#85000F"}
+                  bg={colors.bgHover}
                   borderRadius={"5"}
                   flexDir={"column"}
                   flex="1"
@@ -142,11 +139,11 @@ export function TableContentNutritionist({
                   <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                     Rut:
                   </Text>
-                  <Text>{rutNutritionist}</Text>
+                  <Text paddingLeft={1}>{rutNutritionist}</Text>
                 </Flex>
 
                 <Flex
-                  bg={"#85000F"}
+                  bg={colors.bgHover}
                   borderRadius={"5"}
                   flexDir={"column"}
                   flex="1"
@@ -155,11 +152,11 @@ export function TableContentNutritionist({
                   <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                     Nombre:
                   </Text>
-                  <Text>{name + " " + lastName}</Text>
+                  <Text paddingLeft={1}>{name + " " + lastName}</Text>
                 </Flex>
 
                 <Flex
-                  bg={"#85000F"}
+                  bg={colors.bgHover}
                   borderRadius={"5"}
                   flexDir={"column"}
                   flex="1"
@@ -168,11 +165,11 @@ export function TableContentNutritionist({
                   <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                     Email:
                   </Text>
-                  <Text>{email}</Text>
+                  <Text paddingLeft={1}>{email}</Text>
                 </Flex>
 
                 <Flex
-                  bg={"#85000F"}
+                  bg={colors.bgHover}
                   borderRadius={"5"}
                   flexDir={"column"}
                   flex="1"
@@ -181,7 +178,7 @@ export function TableContentNutritionist({
                   <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                     Descripción
                   </Text>
-                  <Text>Nada.</Text>
+                  <Text paddingLeft={1}>Nada.</Text>
                 </Flex>
               </Flex>
             </ModalBody>
@@ -199,7 +196,7 @@ export function TableContentNutritionist({
       ) : (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
-          <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+          <ModalContent bg={colors.bg} color={colors.color}>
             <ModalHeader> Solicitar cita </ModalHeader>
             <ModalCloseButton />
 
@@ -218,7 +215,7 @@ export function TableContentNutritionist({
                   color={colors.color}
                   error={errors.title}
                   placeholder="Asunto"
-                  borderColor={"#a92a39"}
+                  bg={colors.bgHover}
                   {...register("title")}
                 />
                 <Input
@@ -227,7 +224,7 @@ export function TableContentNutritionist({
                   label="Ingrese la descripción"
                   color={colors.color}
                   placeholder="Descripción"
-                  borderColor={"#a92a39"}
+                  bg={colors.bgHover}
                   error={errors.description}
                   {...register("description")}
                 />
@@ -242,9 +239,8 @@ export function TableContentNutritionist({
                 onClick={onClose}
               />
               <Button
-                borderColor={"#a92a39"}
                 type="submit"
-                bg={colors.primary}
+                bg={colors.secondary}
                 form="appointmentForm"
                 name="enviar"
               />

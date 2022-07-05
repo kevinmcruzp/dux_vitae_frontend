@@ -59,7 +59,7 @@ export function TableContentClient({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+        <ModalContent bg={colors.bg} color={colors.color}>
           <ModalHeader>
             <Flex align={"center"} gap={3}>
               <Avatar name={name + " " + lastName} />
@@ -70,7 +70,7 @@ export function TableContentClient({
           <ModalBody gap={2}>
             <Flex flexDir={"column"} flex="1" gap={3}>
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -79,11 +79,11 @@ export function TableContentClient({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Rut:
                 </Text>
-                <Text>{rut}</Text>
+                <Text paddingLeft={1}>{rut}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -92,11 +92,11 @@ export function TableContentClient({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Nombre:
                 </Text>
-                <Text>{name + " " + lastName}</Text>
+                <Text paddingLeft={1}>{name + " " + lastName}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -105,11 +105,11 @@ export function TableContentClient({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Email:
                 </Text>
-                <Text>{email}</Text>
+                <Text paddingLeft={1}>{email}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -118,7 +118,7 @@ export function TableContentClient({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Descripción
                 </Text>
-                <Text>Nada.</Text>
+                <Text paddingLeft={1}>Nada.</Text>
               </Flex>
             </Flex>
           </ModalBody>

@@ -91,7 +91,7 @@ export function TableContentCertificate({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bg={colors.primary} color={"#FFFFFF"}>
+        <ModalContent bg={colors.bg} color={colors.color}>
           <ModalHeader>
             <Flex align={"center"} gap={3}>
               <Avatar name={nutritionist.name + " " + nutritionist.lastName} />
@@ -102,7 +102,7 @@ export function TableContentCertificate({
           <ModalBody gap={2}>
             <Flex flexDir={"column"} flex="1" gap={3}>
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -111,11 +111,11 @@ export function TableContentCertificate({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Rut:
                 </Text>
-                <Text>{nutritionist.rut}</Text>
+                <Text paddingLeft={1}>{nutritionist.rut}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -124,11 +124,13 @@ export function TableContentCertificate({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Nombre:
                 </Text>
-                <Text>{nutritionist.name + " " + nutritionist.lastName}</Text>
+                <Text paddingLeft={1}>
+                  {nutritionist.name + " " + nutritionist.lastName}
+                </Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -137,11 +139,11 @@ export function TableContentCertificate({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Email:
                 </Text>
-                <Text>{nutritionist.email}</Text>
+                <Text paddingLeft={1}>{nutritionist.email}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -150,11 +152,11 @@ export function TableContentCertificate({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Revisión certificado:
                 </Text>
-                <Text>{state ? "Aceptado" : "En espera"}</Text>
+                <Text paddingLeft={1}>{state ? "Aceptado" : "En espera"}</Text>
               </Flex>
 
               <Flex
-                bg={"#85000F"}
+                bg={colors.bgHover}
                 borderRadius={"5"}
                 flexDir={"column"}
                 flex="1"
@@ -163,7 +165,7 @@ export function TableContentCertificate({
                 <Text fontSize={"1.1rem"} fontWeight={"bold"}>
                   Descripción
                 </Text>
-                <Text>Nada.</Text>
+                <Text paddingLeft={1}>Nada.</Text>
               </Flex>
             </Flex>
           </ModalBody>
@@ -178,8 +180,7 @@ export function TableContentCertificate({
             <Button
               name="Aceptar"
               disabled={state}
-              borderColor={"#a92a39"}
-              bg={colors.primary}
+              bg={colors.secondary}
               onClick={() => {
                 AcceptNutritionistCertificate(idCertificate);
               }}
