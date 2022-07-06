@@ -130,7 +130,6 @@ export const getServerSideProps = withSSRAuth(
 
       const cookies = parseCookies(ctx);
       const rut = cookies["rut"];
-      // console.log(rut);
       const responseAppointment = await apiClient.get(`/appointments/${rut}`);
 
       const appointment = responseAppointment?.data;
@@ -147,8 +146,8 @@ export const getServerSideProps = withSSRAuth(
     } catch (err) {
       return {
         props: {
-          nutritionists: [], // Leh: Retorno vazio
-          appointment: [], // Leh: Retorno vazio
+          nutritionists: [],
+          appointment: [],
         },
       };
     }

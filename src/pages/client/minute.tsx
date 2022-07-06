@@ -135,14 +135,13 @@ export const getServerSideProps = withSSRAuth(
       const files = await apiClient.get(`/files/${rut}`);
 
       const fileList = files.data;
-      // console.log(fileList);
       return {
         props: { fileList },
       };
     } catch (err) {
       return {
         props: {
-          fileList: [], // Leh: Retorno vazio
+          fileList: [],
         },
       };
     }
