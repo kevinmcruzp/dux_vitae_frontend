@@ -34,6 +34,7 @@ export function TableContentClient({
   const { colors } = useColors();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log(state);
 
   return (
     <>
@@ -42,7 +43,7 @@ export function TableContentClient({
           <Td>{rut}</Td>
           <Td>{name} </Td>
           <Td>{lastName}</Td>
-          <Td>Aceptado</Td>
+          {state === "true" ? null : <Td>Aceptado</Td>}
 
           <Td display="flex" alignItems={"center"} justifyContent={"flex-end"}>
             <Button
