@@ -1,10 +1,9 @@
 import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
-  RiFeedbackLine,
   RiHome4Line,
-  RiMessage2Line,
   RiProfileLine,
   RiUser3Line,
+  RiUserHeartFill,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
 import { useColors } from "../../hooks/useColors";
@@ -58,7 +57,7 @@ export function SidebarAdmin() {
           align="center"
           gap={2}
         >
-          <RiUser3Line size="25px" />
+          <RiUserHeartFill size="25px" />
           {isWebVersion && <Text fontSize="xl">Nutricionista</Text>}
         </Flex>
       </ActiveLink>
@@ -73,7 +72,7 @@ export function SidebarAdmin() {
           align="center"
           gap={2}
         >
-          <RiMessage2Line size="25px" />
+          <RiUser3Line size="25px" />
           {isWebVersion && <Text fontSize="xl">Cliente</Text>}
         </Flex>
       </ActiveLink>
@@ -93,7 +92,7 @@ export function SidebarAdmin() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/admin/claim">
+      {/* <ActiveLink href="/admin/claim">
         <Flex
           p={2}
           cursor="pointer"
@@ -106,7 +105,7 @@ export function SidebarAdmin() {
           <RiFeedbackLine size="25px" />
           {isWebVersion && <Text fontSize="xl">Reclamos</Text>}
         </Flex>
-      </ActiveLink>
+      </ActiveLink> */}
     </Flex>
   );
 }

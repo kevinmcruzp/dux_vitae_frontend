@@ -1,9 +1,7 @@
 import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import {
-  RiCalendarCheckLine,
   RiHome4Line,
   RiMessage2Line,
-  RiSettings3Line,
   RiUser3Line,
   RiWechatLine,
 } from "react-icons/ri";
@@ -75,7 +73,7 @@ export function SidebarNutritionist() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/nutritionist/schedule">
+      {/* <ActiveLink href="/nutritionist/schedule">
         <Flex
           p={2}
           cursor="pointer"
@@ -88,7 +86,7 @@ export function SidebarNutritionist() {
           <RiCalendarCheckLine size="25px" />
           {isWebVersion && <Text fontSize="xl">Agenda</Text>}
         </Flex>
-      </ActiveLink>
+      </ActiveLink> */}
 
       <ActiveLink href="/nutritionist/request">
         {/* <IconButtonTooltip
@@ -109,7 +107,7 @@ export function SidebarNutritionist() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/nutritionist/setting">
+      {/* <ActiveLink href="/nutritionist/setting">
         <Flex
           p={2}
           cursor="pointer"
@@ -122,7 +120,7 @@ export function SidebarNutritionist() {
           <RiSettings3Line size="25px" />
           {isWebVersion && <Text fontSize="xl">Configuración</Text>}
         </Flex>
-      </ActiveLink>
+      </ActiveLink> */}
     </Flex>
   );
 }

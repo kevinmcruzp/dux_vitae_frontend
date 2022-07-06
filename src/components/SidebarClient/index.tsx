@@ -3,8 +3,7 @@ import {
   RiFileCopy2Line,
   RiHome4Line,
   RiMessage2Line,
-  RiSettings3Line,
-  RiUser3Line,
+  RiUserHeartFill,
 } from "react-icons/ri";
 import { Logo } from "../../assets/Logo";
 import { useColors } from "../../hooks/useColors";
@@ -53,7 +52,7 @@ export function SidebarClient() {
           align="center"
           gap={2}
         >
-          <RiUser3Line size="25px" />
+          <RiUserHeartFill size="25px" />
           {isWebVersion && <Text fontSize="xl">Nutricionista</Text>}
         </Flex>
       </ActiveLink>
@@ -88,7 +87,7 @@ export function SidebarClient() {
         </Flex>
       </ActiveLink>
 
-      <ActiveLink href="/client/setting">
+      {/* <ActiveLink href="/client/setting">
         <Flex
           p={2}
           cursor="pointer"
@@ -101,7 +100,7 @@ export function SidebarClient() {
           <RiSettings3Line size="25px" />
           {isWebVersion && <Text fontSize="xl">Configuración</Text>}
         </Flex>
-      </ActiveLink>
+      </ActiveLink> */}
     </Flex>
   );
 }
