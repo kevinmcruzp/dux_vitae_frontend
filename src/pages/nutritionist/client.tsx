@@ -9,9 +9,10 @@ import {
   Tfoot,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import { parseCookies } from "nookies";
+import { useMemo, useState } from "react";
 import { TableContentClient } from "../../components/TableContentClient";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
@@ -27,6 +28,15 @@ import { withSSRAuth } from "../../utils/withSSRAuth";
 
 export default function client({ appointmentData }) {
   const { colors } = useColors();
+  const [search, setSearch] = useState("");
+
+  const clientFiltered = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
+
+    return appointmentData?.filter((clients) =>
+      clients.client.name.toLowerCase().includes(lowerSearch)
+    );
+  }, [search, appointmentData]);
 
   return (
     <Flex
@@ -46,7 +56,7 @@ export default function client({ appointmentData }) {
           Cliente:
         </Text>
         <Input
-          // onChange={handleChange}
+          onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar"
           size="sm"
           w="30%"
@@ -65,7 +75,7 @@ export default function client({ appointmentData }) {
           </Thead>
 
           <Tbody color={colors.color}>
-            {appointmentData?.map((clients) => (
+            {clientFiltered?.map((clients) => (
               <TableContentClient
                 key={clients.client.rut}
                 rut={clients.client.rut}
@@ -109,16 +119,16 @@ export const getServerSideProps = withSSRAuth(
         `/appointments/${rutNutritionist}`
       );
       const appointmentData = responseAppointment?.data;
-      // console.log(appointmentData);
+
       return {
         props: {
           appointmentData,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
-          appointmentData: [], // Leh: Retorno vazio
+          appointmentData: [],
         },
       };
     }

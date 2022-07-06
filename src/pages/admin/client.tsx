@@ -4,37 +4,63 @@ import {
   Table,
   TableCaption,
   TableContainer,
+  Tbody,
   Text,
   Tfoot,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { TableContentClient } from "../../components/TableContentClient";
 import { useColors } from "../../hooks/useColors";
+import { setupAPIClient } from "../../services/api";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-export default function client() {
+type Clients = {
+  clients: [
+    {
+      rut: string;
+      email: string;
+      name: string;
+      lastName: string;
+      created_at: Date;
+    }
+  ];
+};
+
+export default function client({ clients }: Clients) {
   const { colors } = useColors();
+  const [search, setSearch] = useState("");
+
+  const clientFiltered = useMemo(() => {
+    const lowerCase = search.toLowerCase();
+
+    return clients.filter((client) =>
+      client.name.toLowerCase().includes(lowerCase)
+    );
+  }, [search, clients]);
 
   return (
     <Flex
+      flex="1"
       w={[
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 50px)",
         "calc(100vw - 250px)",
       ]}
-      h="calc(100vh - 60px)"
+      align="top"
+      justify="center"
       bg={colors.bg}
-      justifyContent={"center"}
-      alignItems={"center"}
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
-          Clientes:
+          Cliente:
         </Text>
         <Input
           // onChange={handleChange}
+          onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar"
           size="sm"
           w="30%"
@@ -47,17 +73,27 @@ export default function client() {
               <Th>Rut</Th>
               <Th>Nombre</Th>
               <Th>Apellido</Th>
-              <Th>Estado</Th>
               <Th></Th>
             </Tr>
           </Thead>
 
+          <Tbody color={colors.color}>
+            {clientFiltered?.map((clients) => (
+              <TableContentClient
+                key={clients.rut}
+                rut={clients.rut}
+                name={clients.name}
+                lastName={clients.lastName}
+                state={"true"}
+                email={clients.email}
+              />
+            ))}
+          </Tbody>
           <Tfoot>
             <Tr>
               <Th>Rut</Th>
               <Th>Nombre</Th>
               <Th>Apellido</Th>
-              <Th>Estado</Th>
               <Th></Th>
             </Tr>
           </Tfoot>
@@ -69,11 +105,19 @@ export default function client() {
 
 export const getServerSideProps = withSSRAuth(
   async (ctx) => {
-    // const apiClient = setupAPIClient(ctx);
-    // const response = await apiClient.get("/me");
+    const apiClient = setupAPIClient(ctx);
+    const response = await apiClient.get("/me");
+
+    const listClient = await apiClient.get("/clients");
+
+    const clients = listClient.data;
+
+    console.log(clients);
 
     return {
-      props: {},
+      props: {
+        clients,
+      },
     };
   },
   {

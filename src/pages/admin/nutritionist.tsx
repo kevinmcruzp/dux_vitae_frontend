@@ -11,6 +11,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
 import { NutritionistsTableContent } from "../../components/NutritionistsTableContent";
 import { useColors } from "../../hooks/useColors";
 import { setupAPIClient } from "../../services/api";
@@ -35,6 +36,15 @@ export default function nutritionist({
   listNutritionist,
 }: ListNutritionistProps) {
   const { colors } = useColors();
+  const [search, setSearch] = useState("");
+
+  const nutritionistFiltered = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
+
+    return listNutritionist?.filter((nutritionist) =>
+      nutritionist.name.toLowerCase().includes(lowerSearch)
+    );
+  }, [search, listNutritionist]);
 
   return (
     <Flex
@@ -51,10 +61,11 @@ export default function nutritionist({
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
-          Cliente:
+          Nutricionista:
         </Text>
         <Input
           // onChange={handleChange}
+          onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar"
           size="sm"
           w="30%"
@@ -72,7 +83,7 @@ export default function nutritionist({
           </Thead>
 
           <Tbody color={colors.color}>
-            {listNutritionist?.map(
+            {nutritionistFiltered?.map(
               (nutritionists) =>
                 nutritionists?.certificate.state && (
                   <NutritionistsTableContent

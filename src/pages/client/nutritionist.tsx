@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import Router from "next/router";
 import { parseCookies } from "nookies";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TableContentNutritionist } from "../../components/TableContentNutritionist";
 import { useColors } from "../../hooks/useColors";
 import { useToasts } from "../../hooks/useToasts";
@@ -25,6 +25,7 @@ export default function client({ nutritionists, appointment }) {
   const { colors } = useColors();
   const [rut, setRut] = useState<string[]>([]);
   const { toastSuccess, toastError } = useToasts();
+  const [search, setSearch] = useState("");
 
   async function onReloadPage(data) {
     try {
@@ -40,12 +41,20 @@ export default function client({ nutritionists, appointment }) {
     }
   }
 
+  const nutritionistFiltered = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
+
+    return nutritionists?.filter((nutritionist) =>
+      nutritionist.name.toLowerCase().includes(lowerSearch)
+    );
+  }, [search, nutritionists]);
+
   useEffect(() => {
     appointment?.map((appointment) => {
       setRut((rut) => [...rut, appointment.nutritionistRut]);
     });
   }, []);
-  // console.log(rut);
+
   return (
     <Flex
       flex="1"
@@ -61,10 +70,10 @@ export default function client({ nutritionists, appointment }) {
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
-          Cliente:
+          Nutricionista:
         </Text>
         <Input
-          // onChange={handleChange}
+          onChange={(event) => setSearch(event.target.value)}
           placeholder="Buscar"
           size="sm"
           w="30%"
@@ -78,11 +87,12 @@ export default function client({ nutritionists, appointment }) {
               <Th>Nombre</Th>
               <Th>Apellido</Th>
               <Th></Th>
+              <Th></Th>
             </Tr>
           </Thead>
 
           <Tbody color={colors.color}>
-            {nutritionists?.map(
+            {nutritionistFiltered?.map(
               (nutritionists) =>
                 nutritionists?.certificate?.state && (
                   <TableContentNutritionist
@@ -102,6 +112,7 @@ export default function client({ nutritionists, appointment }) {
               <Th>Rut</Th>
               <Th>Nombre</Th>
               <Th>Apellido</Th>
+              <Th></Th>
               <Th></Th>
             </Tr>
           </Tfoot>
