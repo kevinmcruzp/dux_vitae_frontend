@@ -68,6 +68,7 @@ export default function Request({ appointment }) {
       align="top"
       justify="center"
       bg={colors.bg}
+      color={colors.color}
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">

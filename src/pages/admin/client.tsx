@@ -53,6 +53,7 @@ export default function client({ clients }: Clients) {
       align="top"
       justify="center"
       bg={colors.bg}
+      color={colors.color}
     >
       <TableContainer w="80%">
         <Text color={colors.color} mb="8px">
