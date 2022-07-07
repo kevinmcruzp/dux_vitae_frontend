@@ -1,47 +1,47 @@
-import { Avatar, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Router from "next/router";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { RiMailLine } from "react-icons/ri";
 import * as yup from "yup";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { Select } from "../../components/Select";
+import { Textarea } from "../../components/Textarea";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
+import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-type ClientData = {
-  rut?: string;
-  name: string;
-  lastName: string;
-  email: string;
-  birthday?: string;
-  gender?: string;
-  phone?: string;
-  created_at?: string;
+type PropsSSR = {
+  clientData: {
+    rut?: string;
+    name: string;
+    lastName: string;
+    email: string;
+    birthday?: string;
+    gender?: string;
+    phone?: string;
+    created_at?: string;
+    description?: string;
+  };
 };
 
 type UpdateData = {
   name: string;
   lastName: string;
-  email: string;
   birthday?: string;
   gender?: string;
   phone?: string;
   created_at?: string;
-  address: string;
-  number: string;
-  city: string;
+  description?: string;
 };
 
 const UpdateSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("El formato debe ser email")
-    .required("El email es requerido"),
   name: yup
     .string()
     .required("El nombre es requerido")
@@ -50,21 +50,19 @@ const UpdateSchema = yup.object().shape({
     .string()
     .required("El apellido es requerido")
     .matches(/^[a-zA-Z\s]+$/g, "El apellido solo puede contener letras"),
-  birthday: yup.date().required("Fecha de nacimiento es requerida"),
-  gender: yup.string().required("El género es requerido"),
+  // birthday: yup.date(),
+  gender: yup.string(),
   phone: yup
     .string()
-    .required("El número telefonico es requerido")
+    .notRequired()
     .matches(
       /^\+56?[ -]*(6|7)[ -]*([0-9][ -]*){8}/g,
       "El formato requerido es +56 9 xxxxxxxx"
     ),
-  address: yup.string().required("La dirección es requerida"),
-  number: yup.string().required("El número de casa o apartamento es requerido"),
-  city: yup.string().required("La ciudad es requerida"),
+  description: yup.string(),
 });
 
-export default function profile({ clientData }) {
+export default function profile({ clientData }: PropsSSR) {
   const {
     register,
     handleSubmit,
@@ -76,6 +74,7 @@ export default function profile({ clientData }) {
   const { colors } = useColors();
   const nameClient = clientData?.name + " " + clientData?.lastName;
   const [dateCreatedClient, setDateCreatedClient] = useState("");
+  const { toastSuccess, toastError } = useToasts();
 
   useEffect(() => {
     const date = new Date(clientData?.created_at);
@@ -84,17 +83,17 @@ export default function profile({ clientData }) {
     );
   }, []);
 
-  // const onSubmit: SubmitHandler<UpdateData> = (data) => {
-  // console.log(data);
-  // api
-  //   .post("/clients", data)
-  //   .then((data) => {
-  //     if (data.status === 200) {
-  //       // Router.push("/");
-  //     }
-  //   })
-  //   .catch(() => {});
-  // };
+  const onSubmit: SubmitHandler<UpdateData> = async (data) => {
+    api
+      .put(`/clients/${clientData.rut}`, data)
+      .then((res) => {
+        if (res.status === 200) {
+          toastSuccess({ description: "Datos actualizados correctamente" });
+          Router.push("/client/profile");
+        }
+      })
+      .catch(() => {});
+  };
 
   return (
     <Flex
@@ -111,14 +110,13 @@ export default function profile({ clientData }) {
     >
       {/* formulario */}
       <Flex
+        as="form"
         gap={5}
         bg={colors.bg}
-        as={"form"}
         padding={2}
         flexDir={"column"}
         flex="1"
-        // onSubmit={handleSubmit(onSubmit)}
-        onSubmit={() => {}}
+        onSubmit={handleSubmit(onSubmit)}
       >
         {/* Información general */}
         <Flex h={"3rem"} align={"end"}>
@@ -128,7 +126,7 @@ export default function profile({ clientData }) {
         </Flex>
         {/* Input información general */}
         <Flex gap={2} flexDir={"column"}>
-          <Flex gap={2}>
+          <SimpleGrid columns={2} justifyItems="center" gap={4} marginTop={4}>
             <Input
               type={"text"}
               idName="name"
@@ -147,13 +145,12 @@ export default function profile({ clientData }) {
               error={errors.lastName}
               {...register("lastName")}
             />
-          </Flex>
 
-          <Flex align={"center"} gap={2}>
             <Input
               type={"date"}
               idName="birthday"
               label="Fecha de nacimiento"
+              defaultValue={clientData?.birthday ? clientData.birthday : ""}
               bg={colors.bgHover}
               error={errors.birthday}
               {...register("birthday")}
@@ -162,46 +159,50 @@ export default function profile({ clientData }) {
             <Select
               idName="gender"
               label="Género"
+              placeholder={!clientData?.gender && "Seleccione un género"}
               bg={colors.bgHover}
-              placeholder="Seleccione género"
               error={errors.gender}
               {...register("gender")}
             >
-              <option value="male">Masculino</option>
-              <option value="female">Femenina</option>
-              <option value="other">Otro</option>
+              {clientData.gender && (
+                <option value={clientData?.gender}>{clientData?.gender}</option>
+              )}
+              <option value="Masculino">Masculino</option>
+              <option value="Femenina">Femenina</option>
+              <option value="Otro">Otro</option>
             </Select>
-          </Flex>
 
-          <Flex gap={2}>
-            <Input
-              type={"email"}
-              idName="email"
-              label="Email"
-              bg={colors.bgHover}
-              defaultValue={clientData?.email}
-              error={errors.email}
-              {...register("email")}
-            />
             <Input
               type={"text"}
               idName="phone"
               label="Teléfono"
+              defaultValue={clientData?.phone ? clientData.phone : ""}
               bg={colors.bgHover}
               error={errors.phone}
               {...register("phone")}
             />
-          </Flex>
+          </SimpleGrid>
+
+          <Textarea
+            idName="description"
+            label="Descripción"
+            defaultValue={
+              clientData?.description ? clientData?.description : ""
+            }
+            bg={colors.bgHover}
+            error={errors.description}
+            {...register("description")}
+          />
         </Flex>
 
         {/* Dirección */}
-        <Flex h={"3rem"} align={"end"}>
+        {/* <Flex h={"3rem"} align={"end"}>
           <Text fontSize={"1.1rem"} fontWeight={"bold"}>
             Dirección
           </Text>
-        </Flex>
+        </Flex> */}
         {/* Input de dirección */}
-        <Flex gap={2} flexDir={"column"}>
+        {/* <Flex gap={2} flexDir={"column"}>
           <Flex gap={2}>
             <Input
               type={"text"}
@@ -216,7 +217,6 @@ export default function profile({ clientData }) {
               idName="number"
               label="Número"
               bg={colors.bgHover}
-              color={colors.color}
               error={errors.number}
               {...register("number")}
             />
@@ -226,14 +226,14 @@ export default function profile({ clientData }) {
             <Input
               idName="region"
               label="Región"
-              defaultValue="Coquimbo"
               bg={colors.bgHover}
+              defaultValue="Coquimbo"
               isDisabled={true}
             />
             <Select
               idName="city"
               label="Ciudad"
-              placeholder="Seleccione género"
+              placeholder="Seleccione ciudad"
               bg={colors.bgHover}
               error={errors.city}
               {...register("city")}
@@ -245,14 +245,19 @@ export default function profile({ clientData }) {
               <option value="Paihuano">Paihuano</option>
             </Select>
           </Flex>
-        </Flex>
+        </Flex> */}
 
-        <Button disabled type="submit" name="Salvar" bg={colors.primary} />
+        <Button
+          type="submit"
+          name="Salvar"
+          bg={colors.primary}
+          isLoading={isSubmitting}
+        />
       </Flex>
 
       {/* Perfil */}
       <Flex
-        align={"center"}
+        align={"top"}
         justifyContent={"center"}
         padding={2}
         w={"25rem"}
@@ -260,6 +265,7 @@ export default function profile({ clientData }) {
         bg={colors.bg}
       >
         <Flex
+          marginTop={20}
           align={"center"}
           flexDir={"column"}
           bg={colors.bgHover}
@@ -275,7 +281,9 @@ export default function profile({ clientData }) {
           </Text>
 
           <Text fontSize="0.9rem" color={colors.divider}>
-            Descripción personal
+            {clientData?.description
+              ? clientData?.description
+              : "Descripción personal"}
           </Text>
 
           <Text as="i">

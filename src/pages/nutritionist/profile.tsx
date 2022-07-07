@@ -1,47 +1,54 @@
-import { Avatar, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Router from "next/router";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { RiMailLine } from "react-icons/ri";
 import * as yup from "yup";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { Select } from "../../components/Select";
+import { Textarea } from "../../components/Textarea";
 import { useColors } from "../../hooks/useColors";
+import { useToasts } from "../../hooks/useToasts";
 import { setupAPIClient } from "../../services/api";
+import { api } from "../../services/apiClient";
 import { withSSRAuth } from "../../utils/withSSRAuth";
 
-type NutritionistData = {
-  rut?: string;
-  name: string;
-  lastName: string;
-  email: string;
-  birthday?: string;
-  gender?: string;
-  phone?: string;
-  created_at?: string;
+type PropsSSR = {
+  nutritionistData: {
+    rut?: string;
+    name: string;
+    lastName: string;
+    email: string;
+    birthday?: string;
+    gender?: string;
+    phone?: string;
+    created_at?: string;
+    description?: string;
+    category?: string;
+  };
+  categories: [
+    {
+      name?: string;
+    }
+  ];
 };
 
 type UpdateData = {
   name: string;
   lastName: string;
-  email: string;
   birthday?: string;
   gender?: string;
   phone?: string;
   created_at?: string;
-  address: string;
-  number: string;
-  city: string;
+  description?: string;
+  category?: string;
 };
 
 const UpdateSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("El formato debe ser email")
-    .required("El email es requerido"),
   name: yup
     .string()
     .required("El nombre es requerido")
@@ -50,21 +57,23 @@ const UpdateSchema = yup.object().shape({
     .string()
     .required("El apellido es requerido")
     .matches(/^[a-zA-Z\s]+$/g, "El apellido solo puede contener letras"),
-  birthday: yup.date().required("Fecha de nacimiento es requerida"),
-  gender: yup.string().required("El género es requerido"),
+  // birthday: yup.date(),
+  gender: yup.string(),
   phone: yup
     .string()
-    .required("El número telefonico es requerido")
+    .notRequired()
     .matches(
       /^\+56?[ -]*(6|7)[ -]*([0-9][ -]*){8}/g,
       "El formato requerido es +56 9 xxxxxxxx"
     ),
-  address: yup.string().required("La dirección es requerida"),
-  number: yup.string().required("El número de casa o apartamento es requerido"),
-  city: yup.string().required("La ciudad es requerida"),
+  description: yup.string(),
+  address: yup.string(),
+  number: yup.string(),
+  city: yup.string(),
+  category: yup.string(),
 });
 
-export default function profile({ nutritionistData }) {
+export default function profile({ categories, nutritionistData }: PropsSSR) {
   const {
     register,
     handleSubmit,
@@ -76,26 +85,27 @@ export default function profile({ nutritionistData }) {
   const { colors } = useColors();
   const nameNutritionist =
     nutritionistData?.name + " " + nutritionistData?.lastName;
-  const [dateCreatedClient, setDateCreatedClient] = useState("");
+  const [dateCreatedNutritionist, setDateCreatedNutritionist] = useState("");
+  const { toastSuccess, toastError } = useToasts();
 
   useEffect(() => {
     const date = new Date(nutritionistData?.created_at);
-    setDateCreatedClient(
+    setDateCreatedNutritionist(
       date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
     );
   }, []);
 
-  // const onSubmit: SubmitHandler<UpdateData> = (data) => {
-  //   console.log(data);
-  // api
-  //   .post("/clients", data)
-  //   .then((data) => {
-  //     if (data.status === 200) {
-  //       // Router.push("/");
-  //     }
-  //   })
-  //   .catch(() => {});
-  // };
+  const onSubmit: SubmitHandler<UpdateData> = async (data) => {
+    api
+      .put(`/nutritionists/${nutritionistData.rut}`, data)
+      .then((res) => {
+        if (res.status === 200) {
+          toastSuccess({ description: "Datos actualizados correctamente" });
+          Router.push("/nutritionist/profile");
+        }
+      })
+      .catch(() => {});
+  };
 
   return (
     <Flex
@@ -112,14 +122,13 @@ export default function profile({ nutritionistData }) {
     >
       {/* formulario */}
       <Flex
+        as="form"
         gap={5}
         bg={colors.bg}
-        as={"form"}
         padding={2}
         flexDir={"column"}
         flex="1"
-        // onSubmit={handleSubmit(onSubmit)}
-        onSubmit={() => {}}
+        onSubmit={handleSubmit(onSubmit)}
       >
         {/* Información general */}
         <Flex h={"3rem"} align={"end"}>
@@ -129,7 +138,7 @@ export default function profile({ nutritionistData }) {
         </Flex>
         {/* Input información general */}
         <Flex gap={2} flexDir={"column"}>
-          <Flex gap={2}>
+          <SimpleGrid columns={2} justifyItems="center" gap={4} marginTop={4}>
             <Input
               type={"text"}
               idName="name"
@@ -148,13 +157,14 @@ export default function profile({ nutritionistData }) {
               error={errors.lastName}
               {...register("lastName")}
             />
-          </Flex>
 
-          <Flex align={"center"} gap={2}>
             <Input
               type={"date"}
               idName="birthday"
               label="Fecha de nacimiento"
+              defaultValue={
+                nutritionistData?.birthday ? nutritionistData?.birthday : ""
+              }
               bg={colors.bgHover}
               error={errors.birthday}
               {...register("birthday")}
@@ -163,46 +173,79 @@ export default function profile({ nutritionistData }) {
             <Select
               idName="gender"
               label="Género"
-              placeholder="Seleccione género"
+              placeholder={!nutritionistData?.gender && "Seleccione un género"}
               bg={colors.bgHover}
               error={errors.gender}
               {...register("gender")}
             >
-              <option value="male">Masculino</option>
-              <option value="female">Femenina</option>
-              <option value="other">Otro</option>
+              {nutritionistData?.gender && (
+                <option value={nutritionistData?.gender}>
+                  {nutritionistData?.gender}
+                </option>
+              )}
+              <option value="Masculino">Masculino</option>
+              <option value="Femenina">Femenina</option>
+              <option value="Otro">Otro</option>
             </Select>
-          </Flex>
 
-          <Flex gap={2}>
-            <Input
-              type={"email"}
-              idName="email"
-              label="Email"
-              bg={colors.bgHover}
-              defaultValue={nutritionistData?.email}
-              error={errors.email}
-              {...register("email")}
-            />
             <Input
               type={"text"}
               idName="phone"
               label="Teléfono"
+              defaultValue={
+                nutritionistData?.phone ? nutritionistData?.phone : ""
+              }
               bg={colors.bgHover}
               error={errors.phone}
               {...register("phone")}
             />
-          </Flex>
+
+            <Select
+              idName="category"
+              label="Categoría"
+              placeholder={
+                !nutritionistData?.category && "Seleccione una categoría"
+              }
+              bg={colors.bgHover}
+              error={errors.category}
+              {...register("category")}
+            >
+              {nutritionistData?.category && (
+                <option value={nutritionistData?.category}>
+                  {nutritionistData?.category}
+                </option>
+              )}
+
+              {categories?.map((category) => (
+                <>
+                  {category.name !== nutritionistData.category && (
+                    <option value={category.name}>{category.name}</option>
+                  )}
+                </>
+              ))}
+            </Select>
+          </SimpleGrid>
+
+          <Textarea
+            idName="description"
+            label="Descripción"
+            defaultValue={
+              nutritionistData.description ? nutritionistData.description : ""
+            }
+            bg={colors.bgHover}
+            error={errors.description}
+            {...register("description")}
+          />
         </Flex>
 
         {/* Dirección */}
-        <Flex h={"3rem"} align={"end"}>
+        {/* <Flex h={"3rem"} align={"end"}>
           <Text fontSize={"1.1rem"} fontWeight={"bold"}>
             Dirección
           </Text>
-        </Flex>
+        </Flex> */}
         {/* Input de dirección */}
-        <Flex gap={2} flexDir={"column"}>
+        {/* <Flex gap={2} flexDir={"column"}>
           <Flex gap={2}>
             <Input
               type={"text"}
@@ -233,7 +276,7 @@ export default function profile({ nutritionistData }) {
             <Select
               idName="city"
               label="Ciudad"
-              placeholder="Seleccione género"
+              placeholder="Seleccione ciudad"
               bg={colors.bgHover}
               error={errors.city}
               {...register("city")}
@@ -245,14 +288,19 @@ export default function profile({ nutritionistData }) {
               <option value="Paihuano">Paihuano</option>
             </Select>
           </Flex>
-        </Flex>
+        </Flex> */}
 
-        <Button disabled type="submit" name="Salvar" bg={colors.primary} />
+        <Button
+          type="submit"
+          name="Salvar"
+          bg={colors.primary}
+          isLoading={isSubmitting}
+        />
       </Flex>
 
       {/* Perfil */}
       <Flex
-        align={"center"}
+        align={"top"}
         justifyContent={"center"}
         padding={2}
         w={"25rem"}
@@ -260,6 +308,7 @@ export default function profile({ nutritionistData }) {
         bg={colors.bg}
       >
         <Flex
+          marginTop={20}
           align={"center"}
           flexDir={"column"}
           bg={colors.bgHover}
@@ -275,7 +324,9 @@ export default function profile({ nutritionistData }) {
           </Text>
 
           <Text fontSize="0.9rem" color={colors.divider}>
-            Descripción personal
+            {nutritionistData?.description
+              ? nutritionistData?.description
+              : "Descripción personal"}
           </Text>
 
           <Text as="i">
@@ -287,7 +338,9 @@ export default function profile({ nutritionistData }) {
             <Text fontSize="0.9rem">{nutritionistData?.email}</Text>
           </Flex>
 
-          <Text fontSize="0.7rem">Cuenta creada el {dateCreatedClient}</Text>
+          <Text fontSize="0.7rem">
+            Cuenta creada el {dateCreatedNutritionist}
+          </Text>
         </Flex>
       </Flex>
     </Flex>
@@ -305,16 +358,21 @@ export const getServerSideProps = withSSRAuth(
       const response = await apiClient.get(`/nutritionists/${rutNutritionist}`);
 
       const nutritionistData = response?.data;
+      const categoriesResponse = await apiClient.get("/categories");
 
+      const categories = categoriesResponse?.data;
+      console.log(categories);
       return {
         props: {
+          categories,
           nutritionistData,
         },
       };
     } catch (err) {
       return {
         props: {
-          nutritionistData: [], // Leh: Retorno vazio
+          categories: [],
+          nutritionistData: [],
         },
       };
     }

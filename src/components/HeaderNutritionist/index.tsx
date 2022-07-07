@@ -1,5 +1,5 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
@@ -9,7 +9,6 @@ import { ThemeSwitcher } from "../ThemeSwitcher";
 
 export function HeaderNutritionist() {
   const { user } = useAuth();
-  const router = useRouter();
   const { colors } = useColors();
 
   const [userName, setUserName] = useState("");
@@ -25,7 +24,8 @@ export function HeaderNutritionist() {
   }, []);
 
   function profile() {
-    router.push("/nutritionist/profile");
+    console.log("profile");
+    Router.push("/nutritionist/profile");
   }
 
   return (
