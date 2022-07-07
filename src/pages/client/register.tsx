@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router from "next/router";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RiArrowLeftCircleLine } from "react-icons/ri";
 import * as yup from "yup";
@@ -14,6 +15,7 @@ import { Logo } from "../../assets/Logo";
 import { Button } from "../../components/Button";
 import { HomeInfo } from "../../components/HomeInfo";
 import { Input } from "../../components/Input";
+import { InputShowPassword } from "../../components/InputShowPassword";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import { useColors } from "../../hooks/useColors";
 import { useToasts } from "../../hooks/useToasts";
@@ -27,24 +29,6 @@ type SignInData = {
   name: string;
   lastName: string;
 };
-
-// var Fn = {
-//   // Valida el rut con su cadena completa "XXXXXXXX-X"
-//   validaRut: function (rutCompleto: string) {
-//     if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto)) return false;
-//     var tmp = rutCompleto.split("-");
-//     var digv = tmp[1];
-//     var rut = tmp[0];
-//     if (digv == "K") digv = "k";
-//     return Fn.dv(parseInt(rut)) == digv;
-//   },
-//   dv: function (T: number) {
-//     var M = 0,
-//       S = 1;
-//     for (; T; T = Math.floor(T / 10)) S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
-//     return S ? S - 1 : "k";
-//   },
-// };
 
 const RegisterSchema = yup.object().shape({
   rut: yup
@@ -87,21 +71,45 @@ export default function register() {
 
   const { toastSuccess, toastError } = useToasts();
   const { colors } = useColors();
+  const [rutValidated, setRutValidated] = useState(false);
 
   const isTabletVersion = useBreakpointValue({ base: false, md: true });
 
+  let Fn = {
+    // Valida el rut con su cadena completa "XXXXXXXX-X"
+    validaRut: function (rutCompleto) {
+      if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto)) return false;
+      var tmp = rutCompleto.split("-");
+      var digv = tmp[1];
+      var rut = tmp[0];
+      if (digv == "K") digv = "k";
+      return Fn.dv(parseInt(rut)) == digv;
+    },
+    dv: function (T: number) {
+      var M = 0,
+        S = 1;
+      for (; T; T = Math.floor(T / 10))
+        S = (S + (T % 10) * (9 - (M++ % 6))) % 11;
+      return S ? S - 1 : "k";
+    },
+  };
+
   const onSubmit: SubmitHandler<SignInData> = (data) => {
-    try {
-      api.post("/clients", data).then((data) => {
-        if (data.status === 200) {
-          toastSuccess({
-            description: "Registro exitoso, por favor inicia sesión",
-          });
-          Router.push("/");
-        }
-      });
-    } catch (err) {
-      toastError({ description: "Error al registrar" });
+    if (Fn.validaRut(data.rut)) {
+      try {
+        api.post("/clients", data).then((data) => {
+          if (data.status === 200) {
+            toastSuccess({
+              description: "Registro exitoso, por favor inicia sesión",
+            });
+            Router.push("/");
+          }
+        });
+      } catch (err) {
+        toastError({ description: "Error al registrar" });
+      }
+    } else {
+      toastError({ description: "Rut no existe" });
     }
   };
 
@@ -115,6 +123,7 @@ export default function register() {
         bg={colors.bgHover}
         flexDir="column"
         overflowY="auto"
+        color={colors.color}
       >
         <Flex justify="space-between" align="center" gap={4}>
           {!isTabletVersion ? <Logo /> : <Flex />}
@@ -180,7 +189,7 @@ export default function register() {
               error={errors.email}
               {...register("email")}
             />
-            <Input
+            <InputShowPassword
               type="password"
               idName="password"
               label="Contraseña"
