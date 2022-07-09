@@ -4,7 +4,7 @@ import { Key } from "react";
 import {
   RiCheckboxBlankCircleFill,
   RiMailLine,
-  RiUserLine
+  RiUserLine,
 } from "react-icons/ri";
 import { GridTemplate } from "../../components/GridTemplate";
 import { useColors } from "../../hooks/useColors";
@@ -86,30 +86,30 @@ export default function home({
               {lastTwoAppointment?.map((appointment) => (
                 <Flex gap={2} key={appointment.idAppointment} flexDir="column">
                   <Text fontWeight={"bold"} fontSize="0.9rem">
-                    Solicitud: {appointment.title}
+                    Solicitud: {appointment?.title}
                   </Text>
                   <Flex flexDir="column" paddingLeft={2} gap={1}>
                     <Flex align={"center"} gap={1}>
                       <RiMailLine />
                       <Text fontSize="0.8rem">
-                        {appointment.nutritionist.email}
+                        {appointment?.nutritionist?.email}
                       </Text>
                     </Flex>
 
                     <Flex align={"center"} gap={1}>
                       <RiUserLine />
                       <Text fontSize="0.8rem">
-                        {appointment.nutritionist.name}{" "}
-                        {appointment.nutritionist.lastName}
+                        {appointment?.nutritionist?.name}{" "}
+                        {appointment?.nutritionist?.lastName}
                       </Text>
                     </Flex>
 
                     <Flex align={"center"} gap={1}>
                       <RiCheckboxBlankCircleFill
-                        color={appointment.state ? "green" : "yellow"}
+                        color={appointment?.state ? "green" : "yellow"}
                       />
                       <Text fontSize="0.8rem">
-                        {appointment.state ? "Aceptado" : "Pendiente..."}
+                        {appointment?.state ? "Aceptado" : "Pendiente..."}
                       </Text>
                     </Flex>
                   </Flex>
@@ -152,8 +152,8 @@ export default function home({
                     <Flex align={"center"} gap={1}>
                       <RiUserLine />
                       <Text fontSize="0.8rem">
-                        {appointment.nutritionist.name}{" "}
-                        {appointment.nutritionist.lastName}
+                        {appointment.nutritionist?.name}{" "}
+                        {appointment.nutritionist?.lastName}
                       </Text>
                     </Flex>
 
@@ -248,7 +248,9 @@ export const getServerSideProps = withSSRAuth(
 
       const cookies = parseCookies(ctx);
       const rutClient = cookies["rut"];
-      const responseAppointment = await apiClient.get(`/appointments/${rutClient}`);
+      const responseAppointment = await apiClient.get(
+        `/appointments/${rutClient}`
+      );
 
       //Últimas dos solicitudes
       const lastTwoAppointment = responseAppointment.data.slice(
@@ -283,14 +285,14 @@ export const getServerSideProps = withSSRAuth(
           lastTwoAppointmentsOnHold,
         },
       };
-    } catch(err) {
+    } catch (err) {
       return {
         props: {
-          lastTwoAppointment: [], // Leh: Devolvo todos como vazio
+          lastTwoAppointment: [],
           lastTwoAppointmentsAccepted: [],
           lastTwoAppointmentsOnHold: [],
-        }
-      }
+        },
+      };
     }
   },
   {

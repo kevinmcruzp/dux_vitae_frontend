@@ -55,7 +55,6 @@ export function TableContentCertificate({
   const [run, setRun] = useState("");
 
   const fileName = file.split("-");
-
   useEffect(() => {
     const cookies = parseCookies(undefined);
     setRun(cookies["rut"]);
