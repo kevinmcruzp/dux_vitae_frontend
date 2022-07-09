@@ -85,7 +85,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
     });
 
     socket.on("message", (data) => {
-      setChat((oldChat) => [...oldChat, data]);
+      setChat((oldChat) => [...(oldChat || []), data]);
     });
 
     setNutritionistRut(rut);
@@ -211,6 +211,7 @@ export default function message({ user, appointment, rut }: serverSideProps) {
                       borderRadius={"none"}
                       gap={3}
                       padding={8}
+                      justifyContent={"start"}
                     >
                       <Avatar
                         name={
