@@ -4,11 +4,63 @@ import {
   Flex,
   Grid,
   SimpleGrid,
-  Text
+  Text,
 } from "@chakra-ui/react";
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+} from "chart.js";
+import faker from "faker";
+import { Line } from "react-chartjs-2";
 import { useAuth } from "../../context/AuthContext";
 import { useColors } from "../../hooks/useColors";
 import { withSSRAuth } from "../../utils/withSSRAuth";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "top" as const,
+    },
+    title: {
+      display: true,
+      text: "Chart.js Line Chart",
+    },
+  },
+};
+
+const labels = ["January", "February", "March", "April", "May", "June", "July"];
+
+export const data = {
+  labels,
+  datasets: [
+    {
+      fill: true,
+      label: "Dataset 2",
+      data: labels.map(() => faker.datatype.number({ min: 0, max: 500 })),
+      borderColor: "rgb(53, 162, 235)",
+      backgroundColor: "rgba(53, 162, 235, 0.5)",
+    },
+  ],
+};
 
 export default function dashboard() {
   const { user } = useAuth();
@@ -32,27 +84,11 @@ export default function dashboard() {
         "calc(100vw - 250px)",
       ]}
       h="calc(100vh - 60px)"
+      overflowY="auto"
     >
-      <SimpleGrid
-        columns={1}
-        w="100%"
-        alignItems="center"
-        justifyItems="center"
-      >
-        <Flex
-          w="70%"
-          h="300px"
-          flexDir="column"
-          borderRadius="12px"
-          bg={colors.bgHover}
-        >
-          <Center>
-            <Text fontSize="2xl" py={2} color={colors.color}>
-              {user?.email}
-            </Text>
-          </Center>
-
-          <Divider color={colors.divider} />
+      <SimpleGrid columns={1} alignItems="center" justifyItems="center">
+        <Flex w="600px" h="300px">
+          <Line options={options} data={data} />
         </Flex>
       </SimpleGrid>
 
