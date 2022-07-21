@@ -1,11 +1,4 @@
-import {
-  Center,
-  Divider,
-  Flex,
-  Grid,
-  SimpleGrid,
-  Text,
-} from "@chakra-ui/react";
+import { Flex, Grid, SimpleGrid } from "@chakra-ui/react";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -42,7 +35,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Chart.js Line Chart",
+      text: "Cantidad de pacientes atendidos por mes",
     },
   },
 };
@@ -54,7 +47,7 @@ export const data = {
   datasets: [
     {
       fill: true,
-      label: "Dataset 2",
+      label: "Cantidad",
       data: labels.map(() => faker.datatype.number({ min: 0, max: 500 })),
       borderColor: "rgb(53, 162, 235)",
       backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -87,12 +80,12 @@ export default function dashboard() {
       overflowY="auto"
     >
       <SimpleGrid columns={1} alignItems="center" justifyItems="center">
-        <Flex w="600px" h="300px">
+        <Flex w="1000px" h="300px">
           <Line options={options} data={data} />
         </Flex>
       </SimpleGrid>
 
-      <SimpleGrid columns={2} w="100%" alignItems="center" gap="10%">
+      {/* <SimpleGrid columns={2} w="100%" alignItems="center" gap="10%">
         <Flex w="100%" justifyContent="end">
           <Flex
             w="66%"
@@ -136,7 +129,7 @@ export default function dashboard() {
             </Flex>
           </Flex>
         </Flex>
-      </SimpleGrid>
+      </SimpleGrid> */}
     </Grid>
   );
 }

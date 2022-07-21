@@ -86,7 +86,7 @@ export default function nutritionist({
           <Tbody color={colors.color}>
             {nutritionistFiltered?.map(
               (nutritionists) =>
-                nutritionists?.certificate.state && (
+                nutritionists?.certificate?.state && (
                   <NutritionistsTableContent
                     key={nutritionists.rut}
                     rutNutritionist={nutritionists.rut}
