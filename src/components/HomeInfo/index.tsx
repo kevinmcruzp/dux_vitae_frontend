@@ -22,13 +22,21 @@ export function HomeInfo() {
         >
           <Logo />
 
-          <Center flex="1" flexDir="column" gap={4}>
-            <Text fontSize="4xl">Bienvenido!</Text>
+          <Center flex="1" flexDir="column" gap={20}>
+            <Text fontSize="4xl">¡Bienvenido a Dux Vitae!</Text>
             <Text>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe
-              fugiat illum odio nulla eligendi. Illo facere atque, iusto
-              mollitia sint fugiat voluptate blanditiis ipsum ullam
-              necessitatibus ipsam aut. Quod, ea.
+              <i>
+                “No todas las dietas causan un trastorno alimentario, pero casi
+                todo trastorno alimentario empieza con una dieta.”
+              </i>
+              <br />
+              <br />
+
+              <i>
+                "Comer no es solo un placer material. Comer bien da una alegría
+                espectacular a la vida y contribuye en gran medida a la buena
+                voluntad, a la moral y a la felicidad." - Elsa Schiaparelli
+              </i>
             </Text>
 
             {router.pathname === "/" ? (
