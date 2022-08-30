@@ -1,354 +1,107 @@
-import { useRouter } from "next/router";
-import Link from 'next/link'
+---
+title: "Documentación del frontend"
+date: 2022-06-20 19:17
+categories:
+  - Documentación
+tags:
+  - Assets
+  - Components
+  - Context
+  - Hooks
+  - Pages
+  - Services
+  - Styles
+  - Utils
+---
 
-//Lista los usuarios<>
-{Data.map((user) => {
-<>
-<Text>
-{user.name}
-</Text>
+# **Documentación del frontend**
 
-<Link href={{
-            pathname: "/user/update",
-            query: { id: user.id }
-           }} passHref>
-asdasdasd
-</Link>
-</>;
-})}
+## **Empezando**
 
-//Recuperar el id en la ruta de actualizar el usuario
-const {query:{id}} = router;
+Primero, clonas el repositório de GitHub
 
-//////////////////////////////////////////////////////////////////////
+Ejemplo utilizando SSH:
 
-/////////////////////////////////////////////////
-import { Divider, Flex, Input, Text } from "@chakra-ui/react";
-import { parseCookies } from "nookies";
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { Button } from "../../components/Button";
-import { useColors } from "../../hooks/useColors";
-import { setupAPIClient } from "../../services/api";
-import { api } from "../../services/apiClient";
-import { withSSRAuth } from "../../utils/withSSRAuth";
+```
+    git clone git@github.com:The-noobs-programmers/dux_vitae_frontend.git
+```
 
-interface IMsg {
-room: string;
-name: string;
-message: string;
-nutritionistRut: string;
-clientRut: string;
-}
+Ahora debes de entrar al directorio del proyecto y bajar las dependencias que se encuentran en el archivo package.json:
 
-type User = {
-name: string;
-lastName: string;
-email?: string;
-};
+```
+    yarn
+    o
+    npm install
+```
 
-type serverSideProps = {
-user: User;
-appointment: [
-{
-idAppointment: string;
-state: boolean;
-clientRut: string;
-client: User;
-}
-];
-rut: string;
-};
+Para hacer funcionar el servidor de desenvolvimiento, debes de ejecutar el comando:
 
-type MsgProps = {
-room: string;
-name: string;
-text: string;
-createdAt: Date;
-};
+```
+    yarn dev
+    o
+    npm run dev
+```
 
-export default function message({ user, appointment, rut }: serverSideProps) {
-const { colors } = useColors();
+Para exibir el proyecto en desenvolvimiento, debes de entrar al [http://localhost:3000](http://localhost:3000) en cualquier browser compatible.
 
-const [connected, setConnected] = useState(false);
-const [chat, setChat] = useState<MsgProps[]>([]);
+## **Flujo de la aplicación frontend**
 
-console.log("MUDEI: ", chat);
+![flujoAppFrontEnd1](https://user-images.githubusercontent.com/72741197/174701293-47458c29-2dda-4384-aff3-82b5feaab05e.png)
+![client](https://user-images.githubusercontent.com/72741197/174701352-6e3e068f-16e8-4d59-8e8f-b389c3accd3d.png)
+![nutritionist](https://user-images.githubusercontent.com/72741197/174701373-26148a84-1305-46af-be98-304ff08a3db0.png)
+![admin](https://user-images.githubusercontent.com/72741197/174701396-d9cb398c-de17-407c-8edc-86493f448b20.png)
 
-const [message, setMessage] = useState("");
-const [sockets, setSockets] = useState<Socket>();
-const [idCurrentlyOpenedRoom, setIdCurrentlyOpenedRoom] = useState("");
-const [clientRut, setClientRut] = useState("");
+## **Herramientas**
 
-const socket = io("http://localhost:3333", { transports: ["websocket"] });
+Para la creación del frontend se utilizó la biblioteca de Javascript [React](https://es.reactjs.org/).
 
-useEffect(() => {
-setChat([]);
+Como repositorio se utilizó [GitHub](https://github.com/KevinMCruzP).
 
-    if (idCurrentlyOpenedRoom === "") {
-      return;
-    }
+Y para el versionado se utilizó [Git](https://git-scm.com/).
 
-    api
-      .get(`/chat/${idCurrentlyOpenedRoom}`)
-      .then((response) => setChat(response?.data?.Message));
+Para más información de las librerías utilizadas se puede consultar en el archivo package.json.
 
-}, [idCurrentlyOpenedRoom]);
+| HERRAMIENTAS                                                       | APLICAR                                                                  |
+| :----------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| [Next](https://nextjs.org/)                                        | Framework de ReactJS                                                     |
+| [Typescript](https://www.typescriptlang.org/docs/)                 | Superconjunto de JavaScript para tipar                                   |
+| [Chakra-UI](https://chakra-ui.com/)                                | Biblioteca de componentes para construir, estilizar la base de app react |
+| [Axios](https://github.com/axios/axios)                            | Biblioteca para el uso de métodos HTTP y consumir API                    |
+| [React-icons](https://react-icons.github.io/react-icons/)          | Biblioteca para icons                                                    |
+| [Nookies](https://www.npmjs.com/package/nookies)                   | Biblioteca para agregar, destruir, o gerenciar cookies de la página      |
+| [jwt-decode](https://jwt.io/)                                      | Decodificar un token, y agarrar sus contenidos                           |
+| [socket.io-client](https://socket.io/docs/v4/client-installation/) | Comunicación bidireccional y de baja latencia para cada plataforma       |
+| [yup](https://www.npmjs.com/package/yup)                           | Biblioteca de javascript para analizar valores y validar                 |
 
-useEffect(() => {
-console.log("HERE");
-socket.on("connect", () => {
-console.log("Is connected: ", socket.connected);
-});
+## **Rutas**
 
-    socket.io.on("error", (error) => {
-      console.log("Connection socket error: ", error);
-    });
+| URL                    | Descripción                                                                       |
+| :--------------------- | :-------------------------------------------------------------------------------- |
+| Rutas                  |                                                                                   |
+| /                      | Página para hacer login                                                           |
+| /client/register       | Página de registro del cliente                                                    |
+| /nutritionist/register | Página de registro del nutricionista                                              |
+| Ruta Clientes          |
+| /client/home           | Muestra datos de diferentes secciones de la app                                   |
+| /client/message        | Página con la sección de chat                                                     |
+| /client/minute         | Contiene los archivos de minutas subidas (No funcional)                           |
+| /client/nutritionist   | Tabla con todos los nutricionistas, en donde se puede crear solicitudes           |
+| /client/profile        | Tiene el perfil del cliente, y se puede actualizar los datos                      |
+| Ruta Nutricionistas    |
+| /nutritionist/home     | Muestra datos de clientes, solicitudes y diferentes secciones de la app           |
+| /nutritionist/client   | Tabla con un listado de clientes                                                  |
+| /nutritionist/message  | Página con la sección de chat                                                     |
+| /nutritionist/profile  | Contiene el perfil del nutricionista, y se puede actualizar los datos             |
+| /nutritionist/request  | Contiene las solicitudes de clientes                                              |
+| Ruta Administrador     |
+| /admin/dashboard       | Página con el dashboard                                                           |
+| /admin/client          | Tabla con todos los clientes                                                      |
+| /admin/nutritionist    | Tabla con todos los nutricionistas                                                |
+| /admin/certificate     | Contiene los archivos de certificados, enviados por nutricionistas (No funcional) |
 
-    socket.on("message", (data) => {
-      // TODO: Verificar se chat está vazio. Se estiver ele nao consgue fazer o .length
-      if (chat.length >= 1) {
-        console.log("YES");
-        setChat((oldChat) => [...oldChat, data]);
-      } else {
-        console.log("NO");
-        setChat(data);
-      }
-    });
+## **Proximas caracteristicas**
 
-    setSockets(socket);
-
-}, [chat]);
-
-const handleListenSocket = (
-isConnected: boolean,
-idCurrentlyOpenedRoom: string,
-clientRut: string
-) => {
-setConnected(isConnected);
-setIdCurrentlyOpenedRoom(idCurrentlyOpenedRoom);
-setClientRut(clientRut);
-};
-
-const sendMessage = () => {
-const msg: IMsg = {
-room: idCurrentlyOpenedRoom,
-name: user.name,
-message,
-nutritionistRut: rut,
-clientRut,
-};
-
-    sockets.emit("room", idCurrentlyOpenedRoom, user.name);
-    sockets.emit("message", msg);
-
-    setMessage("");
-
-};
-
-return (
-<Flex
-w={[
-"calc(100vw - 50px)",
-"calc(100vw - 50px)",
-"calc(100vw - 50px)",
-"calc(100vw - 250px)",
-]}
-h="calc(100vh - 60px)"
-bg={colors.bg}
-justifyContent={"center"}
-alignItems={"center"}
-color={colors.color} >
-<Flex
-w={["100%", "90%", "60%"]}
-h="31rem"
-bg={colors.bgHover}
-flexDir="row"
-gap={2} >
-<Flex flexDir="column" p={4} gap={5} maxW="150px">
-{appointment?.map((appointment) => {
-if (appointment.state) {
-return (
-<Button
-key={appointment.clientRut}
-name={appointment.client.name}
-type="button"
-onClick={() =>
-handleListenSocket(
-true,
-appointment.idAppointment,
-appointment.clientRut
-)
-}
-background="transparent"
-border={"none"}
-/>
-);
-}
-})}
-</Flex>
-
-        <Divider orientation="vertical" color={colors.divider} />
-        <Flex
-          flex="1"
-          p={8}
-          flexDir="column"
-          gap={4}
-          maxW={"calc(100% - 150px)"}
-        >
-          <Flex flex="1" flexDir="column" overflowY={"auto"}>
-            {chat?.length >= 1 ? (
-              chat.map((chat, index) => (
-                <Flex key={index}>
-                  <Text>{chat.name}</Text>
-                  <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
-                </Flex>
-              ))
-            ) : (
-              <Text>No messages yet</Text>
-            )}
-          </Flex>
-
-          <Flex>
-            <Input
-              maxW="50rem"
-              type="text"
-              id="message"
-              placeholder={connected ? "Type your message" : "Connecting..."}
-              disabled={!connected}
-              onChange={(e) => {
-                setMessage(e.target.value);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  sendMessage();
-                }
-              }}
-              value={message}
-            />
-
-            <Button
-              name="Enviar"
-              type="submit"
-              disabled={!connected}
-              onClick={() => {
-                sendMessage();
-              }}
-            />
-          </Flex>
-        </Flex>
-      </Flex>
-    </Flex>
-
-);
-}
-
-export const getServerSideProps = withSSRAuth(
-async (ctx) => {
-const apiClient = setupAPIClient(ctx);
-const response = await apiClient.get("/me");
-const user = {
-name: response.data.name,
-lastName: response.data.lastName,
-email: response.data.email,
-};
-
-    const cookies = parseCookies(ctx);
-    const rut = cookies["rut"];
-    const responseAppointment = await api.get(`/appointments/${rut}`);
-    const appointment = responseAppointment.data;
-
-    return {
-      props: {
-        user,
-        appointment,
-        rut,
-      },
-    };
-
-},
-{
-roles: "nutritionist",
-}
-);
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-<Flex
-w={["100%", "90%", "60%"]}
-h="31rem"
-bg={colors.bgHover}
-flexDir="row"
-gap={2} >
-<Flex flexDir="column" p={4} gap={5} maxW="150px">
-{appointment.map((appointment) => {
-if (appointment.state) {
-return (
-<Button
-key={appointment.clientRut}
-name={appointment.client.name}
-type="button"
-onClick={() => {
-setConnected(true);
-setMyRoom(appointment.idAppointment);
-setClientRut(appointment.clientRut);
-openChat(appointment.idAppointment);
-}}
-background="transparent"
-border={"none"}
-/>
-);
-}
-})}
-</Flex>
-
-        <Divider orientation="vertical" color={colors.divider} />
-        <Flex
-          flex="1"
-          p={8}
-          flexDir="column"
-          gap={4}
-          maxW={"calc(100% - 150px)"}
-        >
-          <Flex flex="1" flexDir="column" overflowY={"auto"}>
-            {chat?.length ? (
-              chat.map((chat, index) => (
-                <Flex key={index}>
-                  <Text>{chat.name}</Text>
-                  <Text maxW={"calc(100% - 150px)"}>: {chat.text}</Text>
-                </Flex>
-              ))
-            ) : (
-              <Text>No messages yet</Text>
-            )}
-          </Flex>
-
-          <Flex>
-            <Input
-              maxW="50rem"
-              type="text"
-              id="message"
-              placeholder={connected ? "Type your message" : "Connecting..."}
-              disabled={!connected}
-              onChange={(e) => {
-                setMessage(e.target.value);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  sendMessage();
-                }
-              }}
-              value={message}
-            />
-
-            <Button
-              name="Enviar"
-              type="submit"
-              disabled={!connected}
-              onClick={() => {
-                sendMessage();
-              }}
-            />
-          </Flex>
-        </Flex>
-      </Flex>
+- Agregar archivos de minutas en pdf
+- Página de agenda
+- Hacer la página de configuración
+- Más datos en la página home
