@@ -1,24 +1,15 @@
----
-title: "Documentación del frontend"
-date: 2022-06-20 19:17
-categories:
-  - Documentación
-tags:
-  - Assets
-  - Components
-  - Context
-  - Hooks
-  - Pages
-  - Services
-  - Styles
-  - Utils
----
+
+<div align="center">
+  <h3>Video de la aplicación: https://youtu.be/pEdW-2I7_T8 </h3>
+</div>
+
+[![Watch the video](https://img.youtube.com/vi/pEdW-2I7_T8/maxresdefault.jpg)](https://youtu.be/pEdW-2I7_T8)
 
 # **Documentación del frontend**
 
 ## **Empezando**
 
-Primero, clonas el repositório de GitHub
+Primero, clonas el repositório de GitHub (Es necesario el backend para la funcionalidad: https://github.com/KevinMCruzP/dux_vitae_backend)
 
 Ejemplo utilizando SSH:
 
@@ -47,8 +38,11 @@ Para exibir el proyecto en desenvolvimiento, debes de entrar al [http://localhos
 ## **Flujo de la aplicación frontend**
 
 ![flujoAppFrontEnd1](https://user-images.githubusercontent.com/72741197/174701293-47458c29-2dda-4384-aff3-82b5feaab05e.png)
+
 ![client](https://user-images.githubusercontent.com/72741197/174701352-6e3e068f-16e8-4d59-8e8f-b389c3accd3d.png)
+
 ![nutritionist](https://user-images.githubusercontent.com/72741197/174701373-26148a84-1305-46af-be98-304ff08a3db0.png)
+
 ![admin](https://user-images.githubusercontent.com/72741197/174701396-d9cb398c-de17-407c-8edc-86493f448b20.png)
 
 ## **Herramientas**
