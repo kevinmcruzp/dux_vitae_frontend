@@ -14,7 +14,7 @@ Primero, clonas el repositório de GitHub (Es necesario el backend para la funci
 Ejemplo utilizando SSH:
 
 ```
-    git clone git@github.com:The-noobs-programmers/dux_vitae_frontend.git
+    git clone git@github.com:KevinMCruzP/dux_vitae_frontend.git
 ```
 
 Ahora debes de entrar al directorio del proyecto y bajar las dependencias que se encuentran en el archivo package.json:
